@@ -1,0 +1,16 @@
+{
+    "name": "IndividualsAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6b7b2c4a0566dcb4db4317c10664c4e8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,19 @@
+{
+    "name": "GeneralAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b0f14afc287cacb4cb449fa2e5fc9ef1",
+        "GUID:6b7b2c4a0566dcb4db4317c10664c4e8",
+        "GUID:72c65739bb956f74990850d8d20369f2",
+        "GUID:ca4cacf99f518224a9099852524107c1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

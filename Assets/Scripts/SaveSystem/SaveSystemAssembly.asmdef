@@ -1,0 +1,18 @@
+{
+    "name": "SaveSystemAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b0f14afc287cacb4cb449fa2e5fc9ef1",
+        "GUID:3f7635db7ddcaae46b074a479f747ad7",
+        "GUID:72c65739bb956f74990850d8d20369f2"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

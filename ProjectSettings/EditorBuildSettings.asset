@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Start_Game.unity
+    guid: b7f189788bd43b04ba74694e10e8c88a
+  - enabled: 1
+    path: Assets/Scenes/Main.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Areas/Overworld.unity
+    guid: 1841993e2ea5cf244b3c15cba87b2f39
+  - enabled: 1
+    path: Assets/Scenes/Transition.unity
+    guid: 3c12cba6c9f2fbe4f8d00914bf7a8eeb
+  - enabled: 1
+    path: Assets/Scenes/Shop.unity
+    guid: 4004ac7fb0adf2a43aad3054318310e9
+  - enabled: 1
+    path: Assets/Scenes/Areas/Farm.unity
+    guid: c526045fe6fed6e41beb9928b65b8aac
+  - enabled: 1
+    path: Assets/Scenes/Areas/Market.unity
+    guid: 6b1dbcdb91a15864caaf54424fd0986c
+  - enabled: 1
+    path: Assets/Scenes/Areas/Suburbs.unity
+    guid: 51f63de18eee1a54bbc3e4c796dcbe87
+  - enabled: 1
+    path: Assets/Scenes/Areas/City.unity
+    guid: 517fd0fbe5ded964bb043b58b82d08d5
+  m_configObjects: {}

@@ -24,7 +24,7 @@ public class Transition : MonoBehaviour
             lerpCounter += Time.deltaTime;
             yield return null;
         }
-        GameManager.Instance.doContinueTransition = true;
+        GameManager.doContinueTransition = true;
         yield return new WaitForSeconds(transitionDuration);
         while (image.color.a > 0)
         {

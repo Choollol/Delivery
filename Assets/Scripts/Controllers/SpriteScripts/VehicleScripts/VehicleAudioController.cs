@@ -25,6 +25,10 @@ public class VehicleAudioController : MonoBehaviour
         {
             yield return null;
         }
+        if (PrimitiveMessenger.GetObject("currentVehicleFuel") <= 0)
+        {
+            yield break;
+        }
         AudioManager.PlaySound("Vehicle Engine");
         yield break;
     }

@@ -6,40 +6,24 @@ using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
-    private static AudioManager instance;
-    public static AudioManager Instance
-    {
-        get { return instance; }
-    }
-    
-
-    private static Dictionary<string, AudioSource> sounds = new Dictionary<string, AudioSource>();
+    private static Dictionary<string, AudioSource> sounds;
 
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (sounds == null)
         {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            instance = this;
+            sounds = new Dictionary<string, AudioSource>();
+            GameObject soundsHolder = GameObject.Find("Sounds Holder");
+            for (int i = 0; i < soundsHolder.transform.GetChild(0).childCount; i++)
+            {
+                sounds.Add(soundsHolder.transform.GetChild(0).GetChild(i).name, soundsHolder.transform.GetChild(0).GetChild(i).GetComponent<AudioSource>());
+            }
+            for (int i = 0; i < soundsHolder.transform.GetChild(1).childCount; i++)
+            {
+                sounds.Add(soundsHolder.transform.GetChild(1).GetChild(i).name, soundsHolder.transform.GetChild(1).GetChild(i).GetComponent<AudioSource>());
+            }
         }
     }
-    void Start()
-    {
-        GameObject soundsHolder = GameObject.Find("Sounds Holder");
-        for (int i = 0; i < soundsHolder.transform.GetChild(0).childCount; i++)
-        {
-            sounds.Add(soundsHolder.transform.GetChild(0).GetChild(i).name, soundsHolder.transform.GetChild(0).GetChild(i).GetComponent<AudioSource>());
-        }
-        for (int i = 0; i < soundsHolder.transform.GetChild(1).childCount; i++)
-        {
-            sounds.Add(soundsHolder.transform.GetChild(1).GetChild(i).name, soundsHolder.transform.GetChild(1).GetChild(i).GetComponent<AudioSource>());
-        }
-        
-    }
-    
     public static void PlaySound(string key)
     {
         sounds[key].Play();

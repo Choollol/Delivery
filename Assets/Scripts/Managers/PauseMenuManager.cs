@@ -1,0 +1,80 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+
+public class PauseMenuManager : MonoBehaviour
+{
+    private static PauseMenuManager instance;
+    public static PauseMenuManager Instance
+    {
+        get { return instance; }
+    }
+
+    [SerializeField] private List<GameObject> tabButtonList;
+
+    private Dictionary<string, ButtonUtil> tabButtonDict = new Dictionary<string, ButtonUtil>();
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+    void Start()
+    {
+        foreach (GameObject tab in tabButtonList)
+        {
+            tabButtonDict.Add(tab.name, tab.GetComponent<ButtonUtil>());
+        }
+
+        UIManager.doStayMain = true;
+        GameManager.Instance.PauseGame();
+        UIManager.Instance.SwitchUI("Settings UI");
+        AudioManager.PlaySound("Menu Open Sound");
+
+        EventMessenger.TriggerEvent("UpdateVolumeSliders");
+
+        //debug
+    }
+    private void OnEnable()
+    {
+        EventMessenger.StartListening("CloseMenu", ClosePauseMenu);
+        EventMessenger.StartListening("UISwitched", UpdateUI);
+        EventMessenger.StartListening("UpdateSwitchBodyText", UpdateSwitchBodyText);
+    }
+    private void OnDisable()
+    {
+        EventMessenger.StopListening("CloseMenu", ClosePauseMenu);
+        EventMessenger.StopListening("UISwitched", UpdateUI);
+        EventMessenger.StopListening("UpdateSwitchBodyText", UpdateSwitchBodyText);
+    }
+    public void ClosePauseMenu()
+    {
+        GameManager.Instance.UnpauseGame();
+    }
+    public void UpdateSwitchBodyText()
+    {
+        StartCoroutine(SwitchBodyText(PrimitiveMessenger.GetObject("playerBody")));
+    }
+    private IEnumerator SwitchBodyText(string body)
+    {
+        yield return new WaitForEndOfFrame();
+        PrimitiveMessenger.EditObject("bodySwitchText", "Current Body: " + body);
+        EventMessenger.TriggerEvent("updateBodySwitchText");
+    }
+    private void UpdateUI()
+    {
+        foreach (ButtonUtil tabButton in tabButtonDict.Values)
+        {
+            tabButton.canChangeOpacity = true;
+            tabButton.SetOpacity(0.5f);
+        }
+        tabButtonDict[UIManager.Instance.currentUI + " Tab Button"].SetOpacity(1);
+        tabButtonDict[UIManager.Instance.currentUI + " Tab Button"].canChangeOpacity = false;
+    }
+}

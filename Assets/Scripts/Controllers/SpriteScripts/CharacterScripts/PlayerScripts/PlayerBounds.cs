@@ -18,7 +18,7 @@ public class PlayerBounds : MonoBehaviour, IBoundable
     }
     private void OnEnable()
     {
-        bounds = BoundsManager.Instance.GetBounds();
+        bounds = BoundsManager.GetBounds();
     }
 
     void Update()

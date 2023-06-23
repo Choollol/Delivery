@@ -7,7 +7,7 @@ public class VehicleInputController : InputController
     public override void Update()
     {
         base.Update();
-        if (Input.GetButtonDown("Interact") && type == InputType.User)
+        if (Input.GetButtonDown("Interact") && GameManager.isPlayerInVehicle)
         {
             InteractionManager.Instance.Interact(transform.GetChild(0).position);
         }

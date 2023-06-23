@@ -21,23 +21,28 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
     {
         if (isUnlocked && GameManager.isGameActive)
         {
-            if (inputController.type == InputController.InputType.None)
+            if (!GameManager.isPlayerInVehicle)
             {
                 player.gameObject.SetActive(false);
-                inputController.type = InputController.InputType.User;
-                CameraMovement.Instance.SetFollowTarget(CameraMovement.FollowTarget.Vehicle, transform.parent.gameObject);
-                GameManager.Instance.isPlayerInVehicle = true;
-                GameManager.Instance.vehicleName = transform.parent.name;
+                if (PrimitiveMessenger.GetObject("currentVehicleFuel") > 0)
+                {
+                    inputController.type = InputController.InputType.User;
+                }
+                CameraMovement.SetFollowTarget(transform.parent.gameObject);
+                GameManager.isPlayerInVehicle = true;
+                GameManager.vehicleName = transform.parent.name;
                 GetComponentInParent<VehicleAudioController>().PlayStartAudio();
+                EventMessenger.TriggerEvent("EnableFuelUI");
             }
-            else if (inputController.type == InputController.InputType.User)
+            else if (GameManager.isPlayerInVehicle)
             {
                 player.gameObject.SetActive(true);
                 player.transform.position = transform.position;
                 inputController.type = InputController.InputType.None;
-                CameraMovement.Instance.SetFollowTarget(CameraMovement.FollowTarget.Player, player.gameObject);
-                GameManager.Instance.isPlayerInVehicle = false;
+                CameraMovement.SetFollowTarget(player.gameObject);
+                GameManager.isPlayerInVehicle = false;
                 GetComponentInParent<VehicleAudioController>().PlayExitAudio();
+                EventMessenger.TriggerEvent("DisableFuelUI");
             }
         }
     }

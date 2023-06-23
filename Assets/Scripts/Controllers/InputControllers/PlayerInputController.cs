@@ -7,13 +7,13 @@ public class PlayerInputController : InputController
 {
     private void OnEnable()
     {
-        EventManager.StartListening("setCanActTrue", SetCanActTrue);
-        EventManager.StartListening("setCanActFalse", SetCanActFalse);
+        EventMessenger.StartListening("SetPlayerCanActTrue", SetCanActTrue);
+        EventMessenger.StartListening("SetPlayerCanActFalse", SetCanActFalse);
     }
     private void OnDisable()
     {
-        EventManager.StopListening("setCanActTrue", SetCanActTrue);
-        EventManager.StopListening("setCanActFalse", SetCanActFalse);
+        EventMessenger.StopListening("SetPlayerCanActTrue", SetCanActTrue);
+        EventMessenger.StopListening("SetPlayerCanActFalse", SetCanActFalse);
     }
     public override void Update()
     {
@@ -25,7 +25,7 @@ public class PlayerInputController : InputController
     }
     /*protected override void OnInteract()
     {
-        if (GameManager.Instance.currentArea == GameManager.Area.Overworld)
+        if (GameManager.currentArea == GameManager.Area.Overworld)
         {
             if (Vector2.Distance(transform.position, GameObject.Find("Shop Building").transform.position) < 0.1f)
             {

@@ -1,11 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
-using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,14 +18,17 @@ public class GameManager : MonoBehaviour
 
     public static bool isGameActive { get; private set; }
 
-    public bool doContinueTransition;
+    public static bool doContinueTransition;
 
-    public bool isInTransition { get; private set; }
+    public static bool isInTransition { get; private set; }
 
-    public bool isPlayerInVehicle;
-    public string vehicleName;
+    public static bool isPlayerInVehicle;
+    public static string vehicleName;
 
-    public Area currentArea { get; private set; }
+    public static bool isMenuOpen;
+    public static bool isMenuOnMain;
+    public static string menuName;
+    public static Area currentArea { get; private set; }
 
     private void Awake()
     {
@@ -42,11 +41,25 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
     }
+    private void OnEnable()
+    {
+        EventMessenger.StartListening("ExitGame", ExitGame);
+        EventMessenger.StartListening("OpenRestaurant", OpenRestaurant);
+        EventMessenger.StartListening("OpenVehicleShop", OpenVehicleShop);
+        EventMessenger.StartListening("OpenGasShop", OpenGasShop);
+    }
+    private void OnDisable()
+    {
+        EventMessenger.StopListening("ExitGame", ExitGame);
+        EventMessenger.StopListening("OpenRestaurant", OpenRestaurant);
+        EventMessenger.StopListening("OpenVehicleShop", OpenVehicleShop);
+        EventMessenger.StopListening("OpenGasShop", OpenGasShop);
+    }
     private void Start()
     {
         currentArea = Area.Overworld;
 
-        BoundsManager.Instance.SetBounds(-8, 8, -5.76f, 5.76f);
+        BoundsManager.SetBounds(-8, 8, -5.76f, 5.76f);
 
         isGameActive = true;
     }
@@ -54,32 +67,51 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            if (ShopManager.isShopOpen)
+            if (isMenuOpen)
             {
-                if (UIManager.Instance.currentUI == "Main UI")
+                if (isMenuOnMain)
                 {
-                    ShopManager.Instance.CloseShop();
+                    EventMessenger.TriggerEvent("CloseMenu");
                 }
                 else
                 {
-                    UIManager.Instance.SwitchUI("Main UI");
+                    EventMessenger.TriggerEvent("SwitchMenuToMain");
                 }
             }
-            else if (isGameActive && !isInTransition && !ShopManager.isShopOpen)
+            else if (isGameActive && !isInTransition)
             {
-                MenuManager.Instance.OpenPauseMenu();
-            }
-            else
-            {
-                MenuManager.Instance.ClosePauseMenu();
+                SceneManager.LoadSceneAsync("Pause_Menu", LoadSceneMode.Additive);
             }
         }
     }
-    public static void OpenShop()
+    public static void OtherMenuOpened()
     {
-        SceneManager.LoadSceneAsync("Shop", LoadSceneMode.Additive);
-        EventManager.TriggerEvent("setCanActFalse");
+        isMenuOpen = true;
+        isMenuOnMain = true;
+    }
+    public static void OtherMenuClosed()
+    {
+        isMenuOpen = false;
+        EventMessenger.TriggerEvent("SetPlayerCanActTrue");
+    }
+    private void OpenRestaurant()
+    {
+        SceneManager.LoadSceneAsync("Restaurant", LoadSceneMode.Additive);
+        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
+        OtherMenuOpened();
+    }
+    private void OpenVehicleShop()
+    {
+        SceneManager.LoadSceneAsync("Vehicle_Shop", LoadSceneMode.Additive);
+        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         AudioManager.PlaySound("Shop Chime");
+        OtherMenuOpened();
+    }
+    private void OpenGasShop()
+    {
+        SceneManager.LoadSceneAsync("Gas_Shop", LoadSceneMode.Additive);
+        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
+        OtherMenuOpened();
     }
     public void SwitchArea(Area newArea)
     {
@@ -87,6 +119,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator HandleSwitchArea(Area newArea)
     {
+        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         StartTransition();
         GameObject currentPlayer;
         if (isPlayerInVehicle)
@@ -114,27 +147,27 @@ public class GameManager : MonoBehaviour
         {
             case Area.Overworld:
                 {
-                    BoundsManager.Instance.SetBounds(-8, 8, -5.76f, 5.76f);
+                    BoundsManager.SetBounds(-8, 8, -5.76f, 5.76f);
                     switch (currentArea)
                     {
                         case Area.Market:
                             {
-                                currentPlayer.transform.position = new Vector3(0, BoundsManager.Instance.GetBounds()[2], currentPlayer.transform.position.z);
+                                currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[2], currentPlayer.transform.position.z);
                                 break;
                             }
                         case Area.Farm:
                             {
-                                currentPlayer.transform.position = new Vector3(BoundsManager.Instance.GetBounds()[1], 0, currentPlayer.transform.position.z);
+                                currentPlayer.transform.position = new Vector3(BoundsManager.GetBounds()[1], 0, currentPlayer.transform.position.z);
                                 break;
                             }
                         case Area.Suburbs:
                             {
-                                currentPlayer.transform.position = new Vector3(0, BoundsManager.Instance.GetBounds()[3], currentPlayer.transform.position.z);
+                                currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[3], currentPlayer.transform.position.z);
                                 break;
                             }
                         case Area.City:
                             {
-                                currentPlayer.transform.position = new Vector3(BoundsManager.Instance.GetBounds()[0], 0, currentPlayer.transform.position.z);
+                                currentPlayer.transform.position = new Vector3(BoundsManager.GetBounds()[0], 0, currentPlayer.transform.position.z);
                                 break;
                             }
                     }
@@ -142,30 +175,40 @@ public class GameManager : MonoBehaviour
                 }
             case Area.Market:
                 {
-                    BoundsManager.Instance.SetBounds(-5, 5, -5, 5);
-                    currentPlayer.transform.position = new Vector3(0, BoundsManager.Instance.GetBounds()[2], currentPlayer.transform.position.z);
+                    BoundsManager.SetBounds(-5, 5, -5, 5);
+                    currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[2], currentPlayer.transform.position.z);
                     break;
                 }
             case Area.Farm:
                 {
-                    BoundsManager.Instance.SetBounds(-5, 5, -5, 5);
-                    currentPlayer.transform.position = new Vector3(BoundsManager.Instance.GetBounds()[0], 0, currentPlayer.transform.position.z);
+                    BoundsManager.SetBounds(-5, 5, -5, 5);
+                    currentPlayer.transform.position = new Vector3(BoundsManager.GetBounds()[0], 0, currentPlayer.transform.position.z);
                     break;
                 }
             case Area.Suburbs:
                 {
-                    BoundsManager.Instance.SetBounds(-5, 5, -5, 5);
-                    currentPlayer.transform.position = new Vector3(0, BoundsManager.Instance.GetBounds()[3], currentPlayer.transform.position.z);
+                    BoundsManager.SetBounds(-5, 5, -5, 5);
+                    currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[3], currentPlayer.transform.position.z);
                     break;
                 }
             case Area.City:
                 {
-                    BoundsManager.Instance.SetBounds(-6.4f, 6.4f, -3.2f, 3.2f);
-                    currentPlayer.transform.position = new Vector3(BoundsManager.Instance.GetBounds()[1], 0, currentPlayer.transform.position.z);
+                    BoundsManager.SetBounds(-6.4f, 6.4f, -3.2f, 3.2f);
+                    currentPlayer.transform.position = new Vector3(BoundsManager.GetBounds()[1], 0, currentPlayer.transform.position.z);
                     break;
                 }
         }
         currentArea = newArea;
+        if (isPlayerInVehicle)
+        {
+            VehicleManager.SetVehicleArea();
+        }
+        else if (VehicleManager.currentVehicleType != VehicleManager.VehicleType.None)
+        {
+            EventMessenger.TriggerEvent("updateVehicleArea");
+            VehicleManager.UpdateVehicleArea();
+        }
+        EventMessenger.TriggerEvent("SetPlayerCanActTrue");
         yield break;
     }
     private void StartTransition()
@@ -180,6 +223,7 @@ public class GameManager : MonoBehaviour
         isInTransition = false;
         SceneManager.UnloadSceneAsync("Transition");
     }
+    
     public void PauseGame()
     {
         isGameActive = false;

@@ -40,7 +40,7 @@ public class SpriteAnimator : MonoBehaviour
 
         animator.Play("Base Layer." + action + "." + spriteName + "_" + action + "_" + direction);
     }
-    protected void DirectionUpdate()
+    protected virtual void DirectionUpdate()
     {
         if (inputController.HorizontalInput < 0)
         {

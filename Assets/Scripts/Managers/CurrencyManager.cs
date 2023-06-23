@@ -52,6 +52,11 @@ public class CurrencyManager : MonoBehaviour
             DecreaseCoins(50);  
         }
     }
+    public void SetCoins(int newCoins)
+    {
+        coins = newCoins;
+        UpdateAmountUI();
+    }
     public void SpawnCoins(int amount)
     {
         for (int i = 0; i < amount; i++)

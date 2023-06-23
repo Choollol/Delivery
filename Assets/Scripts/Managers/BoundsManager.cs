@@ -12,7 +12,7 @@ public class BoundsManager : MonoBehaviour
         get { return instance; }
     }
 
-    private float[] bounds;
+    private static float[] bounds;
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -24,7 +24,7 @@ public class BoundsManager : MonoBehaviour
             instance = this;
         }
     }
-    public void SetBounds(float left, float right, float bottom, float top)
+    public static void SetBounds(float left, float right, float bottom, float top)
     {
         MonoBehaviour[] scripts = FindObjectsOfType<MonoBehaviour>();
         bounds = new float[] { left, right, bottom, top };
@@ -36,7 +36,7 @@ public class BoundsManager : MonoBehaviour
             }
         }
     }
-    public float[] GetBounds()
+    public static float[] GetBounds()
     {
         return bounds;
         /*MonoBehaviour[] scripts = FindObjectsOfType<MonoBehaviour>();

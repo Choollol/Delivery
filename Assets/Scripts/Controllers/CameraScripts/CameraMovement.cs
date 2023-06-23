@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    public enum FollowTarget
-    {
-        Player, Vehicle
-    }
 
     private static CameraMovement instance;
     public static CameraMovement Instance
@@ -15,14 +11,11 @@ public class CameraMovement : MonoBehaviour
         get { return instance; }
     }
 
-    private FollowTarget followTarget;
     private GameObject targetGameObject;
     private SpriteRenderer targetSpriteRenderer;
     private Vector2 targetCenterOffset;
 
     [SerializeField] private GameObject player;
-
-    public GameObject vehicle;
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -36,18 +29,15 @@ public class CameraMovement : MonoBehaviour
     }
     void Start()
     {
-        SetFollowTarget(FollowTarget.Player, player);
     }
     private void LateUpdate()
     {
-        //transform.position = targetSpriteRenderer.bounds.center.ToVector2().ToVector3(transform.position.z);
         transform.position = targetGameObject.transform.position.ToVector2().ToVector3(transform.position.z) + targetCenterOffset.ToVector3(0);
     }
-    public void SetFollowTarget(FollowTarget newFollowTarget, GameObject newTargetGameObject)
+    public static void SetFollowTarget(GameObject newTargetGameObject)
     {
-        followTarget = newFollowTarget;
-        targetGameObject = newTargetGameObject;
-        targetSpriteRenderer = targetGameObject.GetComponent<SpriteRenderer>();
-        targetCenterOffset = targetSpriteRenderer.bounds.center - targetGameObject.transform.position;
+        instance.targetGameObject = newTargetGameObject;
+        instance.targetSpriteRenderer = instance.targetGameObject.GetComponent<SpriteRenderer>();
+        instance.targetCenterOffset = instance.targetSpriteRenderer.bounds.center - instance.targetGameObject.transform.position;
     }
 }

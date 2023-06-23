@@ -18,4 +18,6 @@ public class VehicleData : ScriptableObject
     public Vector2 interactableOffsetUp;
     public Vector2 interactableOffsetLeft;
     public Vector2 interactableOffsetRight;
+
+    public int capacity;
 }

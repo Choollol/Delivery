@@ -3,24 +3,24 @@ using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
 
-public class EventManager : MonoBehaviour
+public class EventMessenger : MonoBehaviour
 {
 
     private Dictionary<string, UnityEvent> eventDictionary;
 
-    private static EventManager instance;
+    private static EventMessenger instance;
 
-    public static EventManager Instance
+    public static EventMessenger Instance
     {
         get
         {
             if (!instance)
             {
-                instance = FindObjectOfType(typeof(EventManager)) as EventManager;
+                instance = FindObjectOfType(typeof(EventMessenger)) as EventMessenger;
 
                 if (!instance)
                 {
-                    Debug.LogError("There needs to be one active EventManger script on a GameObject in your scene.");
+                    Debug.LogError("There needs to be one active EventMessenger script on a GameObject in your scene.");
                 }
                 else
                 {

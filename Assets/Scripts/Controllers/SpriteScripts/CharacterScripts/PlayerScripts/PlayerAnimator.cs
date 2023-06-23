@@ -5,13 +5,24 @@ using UnityEngine;
 public class PlayerAnimator : CharacterAnimator
 {
     private string body;
+    private void Awake()
+    {
+        body = "Female";
+    }
     public override void Start()
     {
         base.Start();
-        body = "Female";
-        MenuManager.Instance.UpdateSwitchBodyText(body);
     }
-
+    private void OnEnable()
+    {
+        EventMessenger.StartListening("SwitchPlayerBody", SwitchBody);
+        PrimitiveMessenger.AddObject("playerBody", body);
+    }
+    private void OnDisable()
+    {
+        EventMessenger.StopListening("SwitchPlayerBody", SwitchBody);
+        PrimitiveMessenger.RemoveObject("playerBody");
+    }
     void Update()
     {
         if (GameManager.isGameActive && inputController.canAct)
@@ -32,6 +43,7 @@ public class PlayerAnimator : CharacterAnimator
         {
             body = "Male";
         }
-        MenuManager.Instance.UpdateSwitchBodyText(body);
+        PrimitiveMessenger.EditObject("playerBody", body);
+        EventMessenger.TriggerEvent("UpdateSwitchBodyText");
     }
 }

@@ -55,4 +55,12 @@ public class VehicleAnimator : SpriteAnimator
             action = Action.Drive;
         }
     }
+    protected override void DirectionUpdate()
+    {
+        if (PrimitiveMessenger.GetObject("currentVehicleFuel") <= 0)
+        {
+            return;
+        }
+        base.DirectionUpdate();
+    }
 }

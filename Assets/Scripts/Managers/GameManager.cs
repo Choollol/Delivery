@@ -205,7 +205,7 @@ public class GameManager : MonoBehaviour
         }
         else if (VehicleManager.currentVehicleType != VehicleManager.VehicleType.None)
         {
-            EventMessenger.TriggerEvent("updateVehicleArea");
+            EventMessenger.TriggerEvent("UpdateVehicleArea");
             VehicleManager.UpdateVehicleArea();
         }
         EventMessenger.TriggerEvent("SetPlayerCanActTrue");

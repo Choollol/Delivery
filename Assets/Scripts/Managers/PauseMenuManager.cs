@@ -65,7 +65,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         PrimitiveMessenger.EditObject("bodySwitchText", "Current Body: " + body);
-        EventMessenger.TriggerEvent("updateBodySwitchText");
+        EventMessenger.TriggerEvent("UpdateBodySwitchText");
     }
     private void UpdateUI()
     {

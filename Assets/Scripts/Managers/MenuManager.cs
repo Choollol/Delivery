@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
-    [SerializeField] private string sceneName;
     private void OnEnable()
     {
         EventMessenger.StartListening("CloseMenu", CloseScene);
@@ -17,7 +16,7 @@ public class MenuManager : MonoBehaviour
     private void CloseScene()
     {
         GameManager.OtherMenuClosed();
-        SceneManager.UnloadSceneAsync(sceneName);
+        SceneManager.UnloadSceneAsync(gameObject.scene);
         UIManager.doStayMain = false;
     }
 }

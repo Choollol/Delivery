@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
     {
         isMenuOpen = true;
         isMenuOnMain = true;
+        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
     }
     public static void OtherMenuClosed()
     {
@@ -97,20 +98,17 @@ public class GameManager : MonoBehaviour
     private void OpenRestaurant()
     {
         SceneManager.LoadSceneAsync("Restaurant", LoadSceneMode.Additive);
-        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         OtherMenuOpened();
     }
     private void OpenVehicleShop()
     {
         SceneManager.LoadSceneAsync("Vehicle_Shop", LoadSceneMode.Additive);
-        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         AudioManager.PlaySound("Shop Chime");
         OtherMenuOpened();
     }
     private void OpenGasShop()
     {
         SceneManager.LoadSceneAsync("Gas_Shop", LoadSceneMode.Additive);
-        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         OtherMenuOpened();
     }
     public void SwitchArea(Area newArea)
@@ -224,12 +222,12 @@ public class GameManager : MonoBehaviour
         SceneManager.UnloadSceneAsync("Transition");
     }
     
-    public void PauseGame()
+    public static void PauseGame()
     {
         isGameActive = false;
         Time.timeScale = 0;
     }
-    public void UnpauseGame()
+    public static void UnpauseGame()
     {
         isGameActive = true;
         Time.timeScale = 1;

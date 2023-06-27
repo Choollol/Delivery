@@ -33,7 +33,8 @@ public class PauseMenuManager : MonoBehaviour
         }
 
         UIManager.doStayMain = true;
-        GameManager.Instance.PauseGame();
+        GameManager.PauseGame();
+        GameManager.OtherMenuOpened();
         UIManager.Instance.SwitchUI("Settings UI");
         AudioManager.PlaySound("Menu Open Sound");
 
@@ -55,7 +56,7 @@ public class PauseMenuManager : MonoBehaviour
     }
     public void ClosePauseMenu()
     {
-        GameManager.Instance.UnpauseGame();
+        GameManager.UnpauseGame();
     }
     public void UpdateSwitchBodyText()
     {

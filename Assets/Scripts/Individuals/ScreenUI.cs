@@ -13,11 +13,15 @@ public class ScreenUI : MonoBehaviour
     {
         EventMessenger.StartListening("EnableFuelUI", EnableFuelUI);
         EventMessenger.StartListening("DisableFuelUI", DisableFuelUI);
+        EventMessenger.StartListening("EnableScreenUI", EnableScreenUI);
+        EventMessenger.StartListening("DisableScreenUI", DisableScreenUI);
     }
     private void OnDisable()
     {
         EventMessenger.StopListening("EnableFuelUI", EnableFuelUI);
         EventMessenger.StopListening("DisableFuelUI", DisableFuelUI);
+        EventMessenger.StopListening("EnableScreenUI", EnableScreenUI);
+        EventMessenger.StopListening("DisableScreenUI", DisableScreenUI);
     }
     private void EnableFuelUI()
     {
@@ -26,5 +30,13 @@ public class ScreenUI : MonoBehaviour
     private void DisableFuelUI()
     {
         fuelUI.gameObject.SetActive(false);
+    }
+    private void EnableScreenUI()
+    {
+        gameObject.SetActive(true);
+    }
+    private void DisableScreenUI()
+    {
+        gameObject.SetActive(false);
     }
 }

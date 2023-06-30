@@ -72,6 +72,8 @@ public class SaveManager : MonoBehaviour
             VehicleManager.SetVehicleActive(false);
         }
 
+        data.hasCompletedCoinfallTutorial = CoinfallManager.hasCompletedTutorial;
+
         WriteData();
     }
     private void Load() 
@@ -99,6 +101,8 @@ public class SaveManager : MonoBehaviour
             vehicle.GetComponent<VehicleFuel>().SetFuel(data.vehicleMaxFuel, true);
             vehicle.GetComponent<VehicleFuel>().SetFuel(data.vehicleCurrentFuel, false);
         }
+
+        CoinfallManager.hasCompletedTutorial = data.hasCompletedCoinfallTutorial;
     }
     private void WriteData()
     {

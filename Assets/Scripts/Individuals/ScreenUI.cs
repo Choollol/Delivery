@@ -5,9 +5,16 @@ using UnityEngine;
 public class ScreenUI : MonoBehaviour
 {
     private GameObject fuelUI;
+
+    private List<GameObject> screenUIList = new List<GameObject>();
     void Start()
     {
         fuelUI = transform.Find("Fuel UI").gameObject;
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            screenUIList.Add(transform.GetChild(i).gameObject);
+        }
     }
     private void OnEnable()
     {
@@ -33,10 +40,19 @@ public class ScreenUI : MonoBehaviour
     }
     private void EnableScreenUI()
     {
-        gameObject.SetActive(true);
+        foreach (GameObject ui in screenUIList)
+        {
+            if (ui.name != fuelUI.name)
+            {
+                ui.SetActive(true);
+            }
+        }
     }
     private void DisableScreenUI()
     {
-        gameObject.SetActive(false);
+        foreach (GameObject ui in screenUIList)
+        {
+            ui.SetActive(false);
+        }
     }
 }

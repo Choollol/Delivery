@@ -18,4 +18,6 @@ public class SaveData
     public float vehicleSpeed;
     public float vehicleMaxFuel;
     public float vehicleCurrentFuel;
+
+    public bool hasCompletedCoinfallTutorial;
 }

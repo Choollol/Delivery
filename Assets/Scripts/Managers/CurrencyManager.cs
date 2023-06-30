@@ -37,15 +37,14 @@ public class CurrencyManager : MonoBehaviour
     }
     private void Start()
     {
-        coins = 100;
         UpdateAmountUI();
-        ObjectPoolManager.Instance.AddPool("Coin Particles", coinParticle, maxCoinParticles, coinParticleParent);
+        ObjectPoolManager.AddPool("CoinParticles", coinParticle, maxCoinParticles, coinParticleParent);
     }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            SpawnCoins(50);
+            SpawnCoins(50, 0);
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
@@ -57,16 +56,22 @@ public class CurrencyManager : MonoBehaviour
         coins = newCoins;
         UpdateAmountUI();
     }
-    public void SpawnCoins(int amount)
+    public void SpawnCoins(int amount, float delay)
     {
+        StartCoroutine(HandleSpawnCoins(amount, delay));
+    }
+    private IEnumerator HandleSpawnCoins(int amount, float delay)
+    {
+        yield return new WaitForSeconds(delay);
         for (int i = 0; i < amount; i++)
         {
-            if (ObjectPoolManager.Instance.IsObjectAvailable("Coin Particles"))
+            if (ObjectPoolManager.IsObjectAvailable("CoinParticles"))
             {
-                ObjectPoolManager.Instance.GetPooledObject("Coin Particles").SetActive(true);
+                ObjectPoolManager.GetPooledObject("CoinParticles").SetActive(true);
                 AudioManager.PlaySound("Coin Spawn Sound");
             }
         }
+        yield break;
     }
     public void IncrementCoins()
     {

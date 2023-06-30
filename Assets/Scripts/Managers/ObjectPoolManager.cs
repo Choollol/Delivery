@@ -9,7 +9,7 @@ public class ObjectPoolManager : MonoBehaviour
     {
         get { return instance; }
     }
-    public Dictionary<string, List<GameObject>> poolDict {get; private set;}
+    public static Dictionary<string, List<GameObject>> poolDict { get; private set; }
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -25,7 +25,7 @@ public class ObjectPoolManager : MonoBehaviour
     {
         poolDict = new Dictionary<string, List<GameObject>>();
     }
-    public void AddPool(string key, GameObject objectToPool, int poolSize, GameObject parent)
+    public static void AddPool(string key, GameObject objectToPool, int poolSize, GameObject parent)
     {
         List<GameObject> pool = new List<GameObject>();
         GameObject temp;
@@ -37,7 +37,7 @@ public class ObjectPoolManager : MonoBehaviour
         }
         poolDict.Add(key, pool);
     }
-    public GameObject GetPooledObject(string key)
+    public static GameObject GetPooledObject(string key)
     {
         for (int i = 0; i < poolDict[key].Count; i++)
         {
@@ -48,7 +48,7 @@ public class ObjectPoolManager : MonoBehaviour
         }
         return null;
     }
-    public bool IsObjectAvailable(string key)
+    public static bool IsObjectAvailable(string key)
     {
         for (int i = 0; i < poolDict[key].Count; i++)
         {
@@ -58,5 +58,12 @@ public class ObjectPoolManager : MonoBehaviour
             }
         }
         return false;
+    }
+    public static void PullFromPool(string key)
+    {
+        if (IsObjectAvailable(key))
+        {
+            GetPooledObject(key).SetActive(true);
+        }
     }
 }

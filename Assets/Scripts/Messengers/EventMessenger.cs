@@ -72,5 +72,9 @@ public class EventMessenger : MonoBehaviour
         {
             thisEvent.Invoke();
         }
+        else
+        {
+            //Debug.Log("EventMessenger does not contain " + eventName);
+        }
     }
 }

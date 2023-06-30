@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         EventMessenger.StartListening("ExitGame", ExitGame);
+
+        EventMessenger.StartListening("StartTransition", StartTransition);
+
         EventMessenger.StartListening("OpenRestaurant", OpenRestaurant);
         EventMessenger.StartListening("OpenVehicleShop", OpenVehicleShop);
         EventMessenger.StartListening("OpenGasShop", OpenGasShop);
@@ -51,6 +54,9 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         EventMessenger.StopListening("ExitGame", ExitGame);
+
+        EventMessenger.StopListening("StartTransition", StartTransition);
+
         EventMessenger.StopListening("OpenRestaurant", OpenRestaurant);
         EventMessenger.StopListening("OpenVehicleShop", OpenVehicleShop);
         EventMessenger.StopListening("OpenGasShop", OpenGasShop);
@@ -83,6 +89,10 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadSceneAsync("Pause_Menu", LoadSceneMode.Additive);
             }
         }
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            OpenSceneWithTransition("Coinfall", "");
+        }
     }
     public static void OtherMenuOpened()
     {
@@ -110,6 +120,44 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadSceneAsync("Gas_Shop", LoadSceneMode.Additive);
         OtherMenuOpened();
+    }
+    public void OpenSceneWithTransition(string sceneName, string transitionEventName)
+    {
+        StartCoroutine(HandleOpenSceneWithTransition(sceneName, transitionEventName));
+    }
+    private IEnumerator HandleOpenSceneWithTransition(string sceneName, string transitionEventName)
+    {
+        StartTransition();
+        doContinueTransition = false;
+        while (!doContinueTransition)
+        {
+            yield return null;
+        }
+        if (transitionEventName != "")
+        {
+            EventMessenger.TriggerEvent(transitionEventName);
+        }
+        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        yield break;
+    }
+    public void CloseSceneWithTransition(string sceneName, string transitionEventName)
+    {
+        StartCoroutine(HandleCloseSceneWithTransition(sceneName, transitionEventName));
+    }
+    private IEnumerator HandleCloseSceneWithTransition(string sceneName, string transitionEventName)
+    {
+        StartTransition();
+        doContinueTransition = false;
+        while (!doContinueTransition)
+        {
+            yield return null;
+        }
+        if (transitionEventName != "")
+        {
+            EventMessenger.TriggerEvent(transitionEventName);
+        }
+        SceneManager.UnloadSceneAsync(sceneName);
+        yield break;
     }
     public void SwitchArea(Area newArea)
     {

@@ -36,7 +36,7 @@ public class PauseMenuManager : MonoBehaviour
         GameManager.PauseGame();
         GameManager.OtherMenuOpened();
         UIManager.Instance.SwitchUI("Settings UI");
-        AudioManager.PlaySound("Menu Open Sound");
+        AudioManager.PlaySound("Pause Menu Open Sound");
 
         EventMessenger.TriggerEvent("UpdateVolumeSliders");
 

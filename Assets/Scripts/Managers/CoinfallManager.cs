@@ -7,8 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class CoinfallManager : MonoBehaviour
 {
-    public static bool hasCompletedTutorial;
+    private static string coinfallKeys = "abcdefghijklmnopqrstuvwxyz";
 
+    public static bool hasCompletedTutorial;
     public static bool isInGame { get; private set; }
 
     [SerializeField] private GameObject coinfallCoin;
@@ -31,7 +32,6 @@ public class CoinfallManager : MonoBehaviour
     private void OnEnable()
     {
         PrimitiveMessenger.AddObject("isRightKeyPressed", false);
-        PrimitiveMessenger.AddObject("alphanumerics", "0123456789abcdefghijklmnopqrstuvwxyz");
         EventMessenger.StartListening("LoseLife", LoseLife);
         EventMessenger.StartListening("AddScore", AddScore);
 
@@ -43,7 +43,6 @@ public class CoinfallManager : MonoBehaviour
     private void OnDisable()
     {
         PrimitiveMessenger.RemoveObject("isRightKeyPressed");
-        PrimitiveMessenger.RemoveObject("alphanumerics");
         EventMessenger.StopListening("LoseLife", LoseLife);
         EventMessenger.StopListening("AddScore", AddScore);
 
@@ -54,6 +53,8 @@ public class CoinfallManager : MonoBehaviour
     }
     void Start()
     {
+        GameManager.isInWorld = false;
+
         EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         EventMessenger.TriggerEvent("FreezeCamera");
         PrimitiveMessenger.EditObject("cameraFrozenPosition", Vector2.zero);
@@ -76,15 +77,19 @@ public class CoinfallManager : MonoBehaviour
             {
                 coinSpeed += coinSpeedIncrementAmount;
             }
-            if (coinSpawnInterval > 0.2f)
+            if (coinSpawnInterval > 0.5f)
             {
                 coinSpawnInterval -= coinSpawnIntervalDecrementAmount;
+            }
+            else if (coinSpawnInterval > 0.2f)
+            {
+                coinSpawnInterval -= coinSpawnIntervalDecrementAmount / 5;
             }
         }
     }
     private void LateUpdate()
     {
-        if (isInGame && Input.anyKeyDown && PrimitiveMessenger.GetObject("alphanumerics").Contains(Input.inputString) && 
+        if (isInGame && Input.anyKeyDown && coinfallKeys.Contains(Input.inputString) && 
             Input.inputString != "")
         {
             if (PrimitiveMessenger.GetObject("isRightKeyPressed"))
@@ -146,6 +151,7 @@ public class CoinfallManager : MonoBehaviour
         }
         countdownText.gameObject.SetActive(true);
         countdownText.text = "3";
+        AudioManager.PlaySound("Coinfall Countdown Sound");
         yield return new WaitForSeconds(1);
         countdownText.text = "2";
         yield return new WaitForSeconds(1);
@@ -156,15 +162,18 @@ public class CoinfallManager : MonoBehaviour
         countdownText.gameObject.SetActive(false);
         StartCoroutine(SpawnCoin());
         isInGame = true;
+        //AudioManager.PlaySound("Coinfall BGM");
         yield break;
     }
     private IEnumerator EndGame()
     {
+        //AudioManager.StopSound("Coinfall BGM");
         yield return new WaitForSeconds(2);
         gameOverText.gameObject.SetActive(true);
         yield return new WaitForSeconds(4);
         gameOverText.text = "Final Score: " + score;
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(4);
+        ObjectPoolManager.RemovePoolKey("CoinfallCoins");
         GameManager.Instance.CloseSceneWithTransition("Coinfall", "CloseCoinfall");
         yield break;
     }
@@ -174,5 +183,7 @@ public class CoinfallManager : MonoBehaviour
         EventMessenger.TriggerEvent("EnableScreenUI");
         EventMessenger.TriggerEvent("SetPlayerCanActTrue");
         EventMessenger.TriggerEvent("UnfreezeCamera");
+
+        GameManager.isInWorld = true;
     }
 }

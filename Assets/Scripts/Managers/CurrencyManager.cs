@@ -42,11 +42,11 @@ public class CurrencyManager : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.LeftBracket))
         {
             SpawnCoins(50, 0);
         }
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(KeyCode.RightBracket))
         {
             DecreaseCoins(50);  
         }

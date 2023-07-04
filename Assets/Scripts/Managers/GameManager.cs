@@ -19,8 +19,9 @@ public class GameManager : MonoBehaviour
     public static bool isGameActive { get; private set; }
 
     public static bool doContinueTransition;
-
     public static bool isInTransition { get; private set; }
+
+    public static bool isInWorld = true;
 
     public static bool isPlayerInVehicle;
     public static string vehicleName;
@@ -98,12 +99,18 @@ public class GameManager : MonoBehaviour
     {
         isMenuOpen = true;
         isMenuOnMain = true;
-        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
+        if (isInWorld)
+        {
+            EventMessenger.TriggerEvent("SetPlayerCanActFalse");
+        }
     }
     public static void OtherMenuClosed()
     {
         isMenuOpen = false;
-        EventMessenger.TriggerEvent("SetPlayerCanActTrue");
+        if (isInWorld)
+        {
+            EventMessenger.TriggerEvent("SetPlayerCanActTrue");
+        }
     }
     private void OpenRestaurant()
     {
@@ -198,7 +205,7 @@ public class GameManager : MonoBehaviour
                     {
                         case Area.Market:
                             {
-                                currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[2], currentPlayer.transform.position.z);
+                                currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[3], currentPlayer.transform.position.z);
                                 break;
                             }
                         case Area.Farm:
@@ -208,7 +215,7 @@ public class GameManager : MonoBehaviour
                             }
                         case Area.Suburbs:
                             {
-                                currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[3], currentPlayer.transform.position.z);
+                                currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[2], currentPlayer.transform.position.z);
                                 break;
                             }
                         case Area.City:
@@ -233,7 +240,7 @@ public class GameManager : MonoBehaviour
                 }
             case Area.Suburbs:
                 {
-                    BoundsManager.SetBounds(-5, 5, -5, 5);
+                    BoundsManager.SetBounds(-3.84f, 3.84f, -3.2f, 3.2f);
                     currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[3], currentPlayer.transform.position.z);
                     break;
                 }
@@ -248,6 +255,7 @@ public class GameManager : MonoBehaviour
         if (isPlayerInVehicle)
         {
             VehicleManager.SetVehicleArea();
+            EventMessenger.TriggerEvent("DeductAreaSwitchFuel");
         }
         else if (VehicleManager.currentVehicleType != VehicleManager.VehicleType.None)
         {

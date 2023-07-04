@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class VehicleFuel : MonoBehaviour
 {
-    public static float fuelConsumptionRate = 0.01f;
+    private static float fuelConsumptionRate = 0.01f;
+
+    private static int areaSwitchFuelCost = 30;
     public float currentFuel { get; private set; }
     [SerializeField] private float maxFuel;
 
@@ -32,6 +34,8 @@ public class VehicleFuel : MonoBehaviour
         PrimitiveMessenger.AddObject("maxVehicleFuel", maxFuel);
         EventMessenger.StartListening("AddVehicleFuel", AddFuel);
         EventMessenger.StartListening("RefillVehicleFuel", RefillFuel);
+
+        EventMessenger.StartListening("DeductAreaSwitchFuel", DeductAreaSwitchFuel);
     }
     private void OnDisable()
     {
@@ -39,6 +43,8 @@ public class VehicleFuel : MonoBehaviour
         PrimitiveMessenger.RemoveObject("maxVehicleFuel");
         EventMessenger.StopListening("AddVehicleFuel", AddFuel);
         EventMessenger.StopListening("RefillVehicleFuel", RefillFuel);
+
+        EventMessenger.StopListening("DeductAreaSwitchFuel", DeductAreaSwitchFuel);
     }
     void Update()
     {
@@ -48,13 +54,27 @@ public class VehicleFuel : MonoBehaviour
             PrimitiveMessenger.EditObject("currentVehicleFuel", currentFuel);
             if (currentFuel <= 0)
             {
-                EventMessenger.TriggerEvent("CanVehicleMoveFalse");
-                AudioManager.StopSound("Vehicle Engine");
+                FuelEmpty();
             }
         }
     }
+    private void DeductAreaSwitchFuel()
+    {
+        currentFuel -= areaSwitchFuelCost;
+        if (currentFuel < 0)
+        {
+            FuelEmpty();
+        }
+        PrimitiveMessenger.EditObject("currentVehicleFuel", currentFuel);
+    }
+    private void FuelEmpty()
+    {
+        currentFuel = 0;
+        EventMessenger.TriggerEvent("CanVehicleMoveFalse");
+        AudioManager.StopSound("Vehicle Engine");
+    }
 
-    public void RefillFuel()
+    private void RefillFuel()
     {
         float amount = PrimitiveMessenger.GetObject("vehicleRefillAmount");
         currentFuel += amount;

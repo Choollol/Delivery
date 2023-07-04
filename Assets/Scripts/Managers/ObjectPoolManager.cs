@@ -66,4 +66,8 @@ public class ObjectPoolManager : MonoBehaviour
             GetPooledObject(key).SetActive(true);
         }
     }
+    public static void RemovePoolKey(string key)
+    {
+        poolDict.Remove(key);
+    }
 }

@@ -32,6 +32,7 @@ public class VehicleFuel : MonoBehaviour
     {
         PrimitiveMessenger.AddObject("currentVehicleFuel", currentFuel);
         PrimitiveMessenger.AddObject("maxVehicleFuel", maxFuel);
+
         EventMessenger.StartListening("AddVehicleFuel", AddFuel);
         EventMessenger.StartListening("RefillVehicleFuel", RefillFuel);
 
@@ -41,6 +42,7 @@ public class VehicleFuel : MonoBehaviour
     {
         PrimitiveMessenger.RemoveObject("currentVehicleFuel");
         PrimitiveMessenger.RemoveObject("maxVehicleFuel");
+
         EventMessenger.StopListening("AddVehicleFuel", AddFuel);
         EventMessenger.StopListening("RefillVehicleFuel", RefillFuel);
 

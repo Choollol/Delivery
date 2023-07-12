@@ -5,8 +5,10 @@ using TMPro;
 
 public class TMPUtil : MonoBehaviour
 {
-    [SerializeField] private string eventName;
+    [SerializeField] private string textUpdateEventName;
+    [SerializeField] private bool doAddValueName;
     [SerializeField] private string valueName;
+    [SerializeField] private string textPrefix;
 
     private TextMeshProUGUI tmp;
     private void Awake()
@@ -15,16 +17,24 @@ public class TMPUtil : MonoBehaviour
     }
     private void OnEnable()
     {
-        EventMessenger.StartListening(eventName, UpdateText);
-        PrimitiveMessenger.AddObject(valueName, tmp.text);
+        EventMessenger.StartListening(textUpdateEventName, UpdateText);
+        if (doAddValueName)
+        {
+            PrimitiveMessenger.AddObject(valueName, tmp.text);
+        }
+
+        UpdateText();
     }
     private void OnDisable()
     {
-        EventMessenger.StopListening(eventName, UpdateText);
-        PrimitiveMessenger.RemoveObject(valueName);
+        EventMessenger.StopListening(textUpdateEventName, UpdateText);
+        if (doAddValueName)
+        {
+            PrimitiveMessenger.RemoveObject(valueName);
+        }
     }
     private void UpdateText()
     {
-        tmp.text = PrimitiveMessenger.GetObject(valueName);
+        tmp.text = textPrefix + PrimitiveMessenger.GetObject(valueName);
     }
 }

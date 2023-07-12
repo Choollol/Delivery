@@ -32,7 +32,7 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
                 GameManager.isPlayerInVehicle = true;
                 GameManager.vehicleName = transform.parent.name;
                 GetComponentInParent<VehicleAudioController>().PlayStartAudio();
-                EventMessenger.TriggerEvent("EnableFuelUI");
+                EventMessenger.TriggerEvent("EnableVehicleUI");
             }
             else if (GameManager.isPlayerInVehicle)
             {
@@ -42,7 +42,7 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
                 CameraMovement.SetFollowTarget(player.gameObject);
                 GameManager.isPlayerInVehicle = false;
                 GetComponentInParent<VehicleAudioController>().PlayExitAudio();
-                EventMessenger.TriggerEvent("DisableFuelUI");
+                EventMessenger.TriggerEvent("DisableVehicleUI");
             }
         }
     }

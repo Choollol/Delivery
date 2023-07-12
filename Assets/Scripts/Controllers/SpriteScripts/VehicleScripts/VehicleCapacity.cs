@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class VehicleCapacity : MonoBehaviour
 {
-    [SerializeField] private int capacity;
-    void Start()
+    [SerializeField] private int maxCapacity;
+    private void Start()
     {
-        
-    }
-
-    void Update()
-    {
-        
+        CapacityManager.maxCapacity = maxCapacity;
+        PrimitiveMessenger.EditObject("maxCapacity", maxCapacity);
     }
 }

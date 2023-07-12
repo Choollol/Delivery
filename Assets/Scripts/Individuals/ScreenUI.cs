@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ScreenUI : MonoBehaviour
 {
-    private GameObject fuelUI;
+    private GameObject vehicleUI;
 
     private List<GameObject> screenUIList = new List<GameObject>();
     void Start()
     {
-        fuelUI = transform.Find("Fuel UI").gameObject;
+        vehicleUI = transform.Find("Vehicle UI").gameObject;
 
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -18,31 +18,31 @@ public class ScreenUI : MonoBehaviour
     }
     private void OnEnable()
     {
-        EventMessenger.StartListening("EnableFuelUI", EnableFuelUI);
-        EventMessenger.StartListening("DisableFuelUI", DisableFuelUI);
+        EventMessenger.StartListening("EnableVehicleUI", EnableFuelUI);
+        EventMessenger.StartListening("DisableVehicleUI", DisableFuelUI);
         EventMessenger.StartListening("EnableScreenUI", EnableScreenUI);
         EventMessenger.StartListening("DisableScreenUI", DisableScreenUI);
     }
     private void OnDisable()
     {
-        EventMessenger.StopListening("EnableFuelUI", EnableFuelUI);
-        EventMessenger.StopListening("DisableFuelUI", DisableFuelUI);
+        EventMessenger.StopListening("EnableVehicleUI", EnableFuelUI);
+        EventMessenger.StopListening("DisableVehicleUI", DisableFuelUI);
         EventMessenger.StopListening("EnableScreenUI", EnableScreenUI);
         EventMessenger.StopListening("DisableScreenUI", DisableScreenUI);
     }
     private void EnableFuelUI()
     {
-        fuelUI.gameObject.SetActive(true);
+        vehicleUI.gameObject.SetActive(true);
     }
     private void DisableFuelUI()
     {
-        fuelUI.gameObject.SetActive(false);
+        vehicleUI.gameObject.SetActive(false);
     }
     private void EnableScreenUI()
     {
         foreach (GameObject ui in screenUIList)
         {
-            if (ui.name != fuelUI.name)
+            if (ui.name != vehicleUI.name)
             {
                 ui.SetActive(true);
             }

@@ -15,7 +15,7 @@ public class VehicleAnimator : SpriteAnimator
         vehicleBounds = GetComponent<PlayerBounds>();
         vehicleInteractable = transform.GetChild(0).gameObject;
 
-        direction = Direction.Right;
+        direction = Direction.Left;
     }
     protected override void OnDirectionChange()
     {

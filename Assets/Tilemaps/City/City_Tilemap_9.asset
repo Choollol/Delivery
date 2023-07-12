@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: City_Tilemap_9
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 773597113, guid: 1e5dbe40890f92645938889fe8e68a42, type: 3}
+  m_Sprite: {fileID: -57796669, guid: 1e5dbe40890f92645938889fe8e68a42, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

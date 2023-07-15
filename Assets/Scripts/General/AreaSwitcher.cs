@@ -15,13 +15,14 @@ public class AreaSwitcher : MonoBehaviour
     {
         
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") || collision.CompareTag("Vehicle"))
         {
             if (collision.GetComponent<SpriteAnimator>().direction == direction)
             {
                 GameManager.Instance.SwitchArea(newArea);
+                gameObject.SetActive(false);
             }
         }
     }

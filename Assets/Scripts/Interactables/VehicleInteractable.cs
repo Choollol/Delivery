@@ -9,8 +9,6 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
     public float interactRange { get; private set; }
 
     private VehicleInputController inputController;
-
-    [SerializeField] private GameObject player;
     void Start()
     {
         inputController = GetComponentInParent<VehicleInputController>();
@@ -23,7 +21,7 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
         {
             if (!GameManager.isPlayerInVehicle)
             {
-                player.gameObject.SetActive(false);
+                EventMessenger.TriggerEvent("EnterVehicle");
                 if (PrimitiveMessenger.GetObject("currentVehicleFuel") > 0)
                 {
                     inputController.type = InputController.InputType.User;
@@ -36,10 +34,9 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
             }
             else if (GameManager.isPlayerInVehicle)
             {
-                player.gameObject.SetActive(true);
-                player.transform.position = transform.position;
+                PrimitiveMessenger.EditObject("vehiclePosition", transform.position);
+                EventMessenger.TriggerEvent("ExitVehicle");
                 inputController.type = InputController.InputType.None;
-                CameraMovement.SetFollowTarget(player.gameObject);
                 GameManager.isPlayerInVehicle = false;
                 GetComponentInParent<VehicleAudioController>().PlayExitAudio();
                 EventMessenger.TriggerEvent("DisableVehicleUI");

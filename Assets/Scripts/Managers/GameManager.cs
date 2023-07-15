@@ -173,6 +173,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator HandleSwitchArea(Area newArea)
     {
         EventMessenger.TriggerEvent("SetPlayerCanActFalse");
+        POIManager.ID = 0;
         StartTransition();
         GameObject currentPlayer;
         if (isPlayerInVehicle)
@@ -228,13 +229,13 @@ public class GameManager : MonoBehaviour
                 }
             case Area.Market:
                 {
-                    BoundsManager.SetBounds(-5, 5, -5, 5);
+                    BoundsManager.SetBounds(-1.92f, 1.92f, -2.4f, 2.4f);
                     currentPlayer.transform.position = new Vector3(0, BoundsManager.GetBounds()[2], currentPlayer.transform.position.z);
                     break;
                 }
             case Area.Farm:
                 {
-                    BoundsManager.SetBounds(-5, 5, -5, 5);
+                    BoundsManager.SetBounds(-3.84f, 3.84f, -1.6f, 1.6f);
                     currentPlayer.transform.position = new Vector3(BoundsManager.GetBounds()[0], 0, currentPlayer.transform.position.z);
                     break;
                 }
@@ -246,7 +247,7 @@ public class GameManager : MonoBehaviour
                 }
             case Area.City:
                 {
-                    BoundsManager.SetBounds(-6.4f, 6.4f, -3.2f, 3.2f);
+                    BoundsManager.SetBounds(-6.4f, 6.4f, -2.72f, 1.72f);
                     currentPlayer.transform.position = new Vector3(BoundsManager.GetBounds()[1], 0, currentPlayer.transform.position.z);
                     break;
                 }
@@ -263,6 +264,8 @@ public class GameManager : MonoBehaviour
             VehicleManager.UpdateVehicleArea();
         }
         EventMessenger.TriggerEvent("SetPlayerCanActTrue");
+        EventMessenger.TriggerEvent("UpdatePOIPointers");
+        EventMessenger.TriggerEvent("UpdatePOIIndicators");
         yield break;
     }
     private void StartTransition()

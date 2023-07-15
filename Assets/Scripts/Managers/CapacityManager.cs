@@ -16,6 +16,8 @@ public class CapacityManager : MonoBehaviour
         EventMessenger.StartListening("PickUpDishesCapacity", PickUpDishes);
         EventMessenger.StartListening("PickUpIngredients", PickUpIngredients);
         EventMessenger.StartListening("DropOffIngredients", DropOffIngredients);
+
+        PrimitiveMessenger.AddObject("ingredientsToPickUp", 0);
     }
     private void OnDisable()
     {
@@ -25,17 +27,11 @@ public class CapacityManager : MonoBehaviour
         EventMessenger.StopListening("PickUpDishesCapacity", PickUpDishes);
         EventMessenger.StopListening("PickUpIngredients", PickUpIngredients);
         EventMessenger.StopListening("DropOffIngredients", DropOffIngredients);
+        PrimitiveMessenger.RemoveObject("ingredientsToPickUp");
     }
     private void Awake()
     {
         maxCapacity = 1;
-    }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            PickUpIngredients();
-        }
     }
     private void PickUpDishes()
     {

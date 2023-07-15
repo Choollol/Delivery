@@ -19,12 +19,14 @@ public class DishManager : MonoBehaviour
         PrimitiveMessenger.AddObject("numOfDishes", numOfDishes);
 
         EventMessenger.StartListening("PickUpDishes", PickUpDishes);
+        PrimitiveMessenger.AddObject("dishesToPickUp", 0);
     }
     private void OnDisable()
     {
         PrimitiveMessenger.RemoveObject("numOfDishes");
 
         EventMessenger.StopListening("PickUpDishes", PickUpDishes);
+        PrimitiveMessenger.RemoveObject("dishesToPickUp");
     }
     void Start()
     {
@@ -51,14 +53,24 @@ public class DishManager : MonoBehaviour
     }
     private void PickUpDishes()
     {
-        int temp = PrimitiveMessenger.GetObject("maxCapacity") - PrimitiveMessenger.GetObject("capacityInUse");
-        EventMessenger.TriggerEvent("PickUpDishesCapacity");
-        numOfDishes -= temp;
-        if (numOfDishes < 0)
+        int dishesToPickUp = 0;
+        if (numOfDishes + PrimitiveMessenger.GetObject("capacityInUse") <= PrimitiveMessenger.GetObject("maxCapacity"))
         {
-            numOfDishes = 0;
+            dishesToPickUp = numOfDishes;
         }
+        else if (numOfDishes + PrimitiveMessenger.GetObject("capacityInUse") > PrimitiveMessenger.GetObject("maxCapacity"))
+        {
+            dishesToPickUp = PrimitiveMessenger.GetObject("maxCapacity") - PrimitiveMessenger.GetObject("capacityInUse");
+        }
+        PrimitiveMessenger.EditObject("dishesToPickUp", dishesToPickUp);
+        EventMessenger.TriggerEvent("PickUpDishesCapacity");
+        for (int i = 0; i < dishesToPickUp; i++)
+        {
+            POIManager.AddCustomerPOI(1);
+        }
+        numOfDishes -= dishesToPickUp;
         PrimitiveMessenger.EditObject("numOfDishes", numOfDishes);
         EventMessenger.TriggerEvent("UpdateDishesText");
+        EventMessenger.TriggerEvent("UpdatePOIIndicators");
     }
 }

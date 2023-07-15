@@ -67,7 +67,7 @@ public class CurrencyManager : MonoBehaviour
         {
             if (ObjectPoolManager.IsObjectAvailable("CoinParticles"))
             {
-                ObjectPoolManager.GetPooledObject("CoinParticles").SetActive(true);
+                ObjectPoolManager.PullFromPool("CoinParticles");
                 AudioManager.PlaySound("Coin Spawn Sound");
             }
         }

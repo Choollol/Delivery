@@ -41,7 +41,18 @@ public class ObjectPoolManager : MonoBehaviour
     {
         for (int i = 0; i < poolDict[key].Count; i++)
         {
-            if (!poolDict[key][i].activeInHierarchy)
+            if (poolDict[key][i].activeInHierarchy)
+            {
+                return poolDict[key][i];
+            }
+        }
+        return null;
+    }
+    public static GameObject GetPooledObject(string key, Vector3 pos)
+    {
+        for (int i = 0; i < poolDict[key].Count; i++)
+        {
+            if (poolDict[key][i].activeInHierarchy && poolDict[key][i].transform.position == pos)
             {
                 return poolDict[key][i];
             }
@@ -61,9 +72,25 @@ public class ObjectPoolManager : MonoBehaviour
     }
     public static void PullFromPool(string key)
     {
-        if (IsObjectAvailable(key))
+        for (int i = 0; i < poolDict[key].Count; i++)
         {
-            GetPooledObject(key).SetActive(true);
+            if (!poolDict[key][i].activeInHierarchy)
+            {
+                poolDict[key][i].SetActive(true);
+                return;
+            }
+        }
+    }
+    public static void PullFromPool(string key, Vector3 pos)
+    {
+        for (int i = 0; i < poolDict[key].Count; i++)
+        {
+            if (!poolDict[key][i].activeInHierarchy)
+            {
+                poolDict[key][i].SetActive(true);
+                poolDict[key][i].transform.position = pos;
+                return;
+            }
         }
     }
     public static void RemovePoolKey(string key)

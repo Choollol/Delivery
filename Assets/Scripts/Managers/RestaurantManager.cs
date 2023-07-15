@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class RestaurantManager : MonoBehaviour
 {
-    private static int ingredients = 10;
+    public static int ingredients { get; private set; }
     private static int maxIngredients = 100;
+    private void Awake()
+    {
+        ingredients = 10;
+    }
     private void OnEnable()
     {
         PrimitiveMessenger.AddObject("ingredients", ingredients);

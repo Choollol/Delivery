@@ -26,6 +26,8 @@ public class POIManager : MonoBehaviour
     private static Dictionary<GameManager.Area, int> poiCounts = new Dictionary<GameManager.Area, int>(); // Current POIs
 
     public static Dictionary<KeyValuePair<GameManager.Area, int>, int> poiOrders { get; private set; } // Area, ID, Number of orders
+
+    private float supplierTimer = 5;
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -98,11 +100,56 @@ public class POIManager : MonoBehaviour
         poiCounts[area]++;
         Instance.UpdatePOIPointers();
     }
-    public static void AddSupplierPOI()
+    private IEnumerator AddSupplierPOI()
     {
-
+        if (RestaurantManager.ingredients < 20)
+        {
+            supplierTimer = 5;
+        }
+        else if (RestaurantManager.ingredients < 50)
+        {
+            supplierTimer = 20;
+        }
+        else
+        {
+            supplierTimer = 60;
+        }
+        yield return new WaitForSeconds(supplierTimer);
+        switch (UnityEngine.Random.Range(0, 2))
+        {
+            case 0:
+                {
+                    int id = UnityEngine.Random.Range(0, areaPOICounts[GameManager.Area.Market]);
+                    poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] += 
+                        UnityEngine.Random.Range(1, 4);
+                    if (poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] > 50)
+                    {
+                        poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] = 50;
+                    }
+                    break;
+                }
+            case 1:
+                {
+                    poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] += UnityEngine.Random.Range(2, 6);
+                    if (poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] > 50)
+                    {
+                        poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] = 50;
+                    }
+                    break;
+                }
+        }
+        while (!GameManager.isGameActive)
+        {
+            yield return null;
+        }
+        StartCoroutine(AddSupplierPOI());
+        yield break;
     }
-
+    public static void CompleteOrder(GameManager.Area area, int id)
+    {
+        poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] = 0;
+        EventMessenger.TriggerEvent("UpdatePOIIndicators");
+    }
     public static void AddPOIIndicator(Vector3 targetPos)
     {
         ObjectPoolManager.PullFromPool("POIIndicators", targetPos); //+ new Vector3(0, 0.12f));

@@ -48,6 +48,10 @@ public class DishManager : MonoBehaviour
         EventMessenger.TriggerEvent("UpdateDishesText");
         RestaurantManager.UseIngredients(dishesToCook);
         cookCooldown = Random.Range(minCookCooldown, maxCookCooldown);
+        while (!GameManager.isGameActive)
+        {
+            yield return null;
+        }
         StartCoroutine(Cook());
         yield break;
     }

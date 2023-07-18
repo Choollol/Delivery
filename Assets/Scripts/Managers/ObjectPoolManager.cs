@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class ObjectPoolManager : MonoBehaviour
 {
@@ -52,7 +53,7 @@ public class ObjectPoolManager : MonoBehaviour
     {
         for (int i = 0; i < poolDict[key].Count; i++)
         {
-            if (poolDict[key][i].activeInHierarchy && poolDict[key][i].transform.position == pos)
+            if (poolDict[key][i].activeInHierarchy && Vector2.Distance(poolDict[key][i].transform.position, pos) < 0.01f)
             {
                 return poolDict[key][i];
             }
@@ -88,8 +89,18 @@ public class ObjectPoolManager : MonoBehaviour
             if (!poolDict[key][i].activeInHierarchy)
             {
                 poolDict[key][i].SetActive(true);
-                poolDict[key][i].transform.position = pos;
+                poolDict[key][i].transform.position = new Vector3(pos.x, pos.y, poolDict[key][i].transform.position.z);
                 return;
+            }
+        }
+    }
+    public static void ResetPool(string key)
+    {
+        for (int i = 0; i < poolDict[key].Count; i++)
+        {
+            if (poolDict[key][i].activeInHierarchy)
+            {
+                poolDict[key][i].SetActive(false);
             }
         }
     }

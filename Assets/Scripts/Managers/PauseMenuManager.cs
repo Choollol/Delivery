@@ -34,7 +34,6 @@ public class PauseMenuManager : MonoBehaviour
 
         UIManager.doStayMain = true;
         GameManager.PauseGame();
-        GameManager.OtherMenuOpened();
         UIManager.Instance.SwitchUI("Settings UI");
         AudioManager.PlaySound("Pause Menu Open Sound");
 

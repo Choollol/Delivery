@@ -184,6 +184,21 @@ public class CoinfallManager : MonoBehaviour
         EventMessenger.TriggerEvent("SetPlayerCanActTrue");
         EventMessenger.TriggerEvent("UnfreezeCamera");
 
+        int coins = 0;
+        if (score < 20)
+        {
+            coins = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 6 + 2));
+        }
+        else if (score < 60)
+        {
+            coins = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 8 + 4));
+        }
+        else
+        {
+            coins = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 12 + 7));
+        }
+        CurrencyManager.Instance.SpawnCoins(coins, 1.5f);
+
         GameManager.isInWorld = true;
     }
 }

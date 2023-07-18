@@ -13,6 +13,10 @@ public class MenuManager : MonoBehaviour
     {
         EventMessenger.StopListening("CloseMenu", CloseScene);
     }
+    private void Awake()
+    {
+        GameManager.OtherMenuOpened();
+    }
     private void CloseScene()
     {
         GameManager.OtherMenuClosed();

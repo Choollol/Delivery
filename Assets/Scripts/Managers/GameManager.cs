@@ -51,6 +51,10 @@ public class GameManager : MonoBehaviour
         EventMessenger.StartListening("OpenRestaurant", OpenRestaurant);
         EventMessenger.StartListening("OpenVehicleShop", OpenVehicleShop);
         EventMessenger.StartListening("OpenGasShop", OpenGasShop);
+
+        EventMessenger.StartListening("OpenCoinfall", OpenCoinfall);
+
+        PrimitiveMessenger.AddObject("CoinfallBaseAmount", 0);
     }
     private void OnDisable()
     {
@@ -61,6 +65,10 @@ public class GameManager : MonoBehaviour
         EventMessenger.StopListening("OpenRestaurant", OpenRestaurant);
         EventMessenger.StopListening("OpenVehicleShop", OpenVehicleShop);
         EventMessenger.StopListening("OpenGasShop", OpenGasShop);
+
+        EventMessenger.StopListening("OpenCoinfall", OpenCoinfall);
+
+        PrimitiveMessenger.RemoveObject("CoinfallBaseAmount");
     }
     private void Start()
     {
@@ -90,10 +98,10 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadSceneAsync("Pause_Menu", LoadSceneMode.Additive);
             }
         }
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            OpenSceneWithTransition("Coinfall", "");
-        }
+    }
+    private void OpenCoinfall()
+    {
+        OpenSceneWithTransition("Coinfall", "");
     }
     public static void OtherMenuOpened()
     {
@@ -115,18 +123,15 @@ public class GameManager : MonoBehaviour
     private void OpenRestaurant()
     {
         SceneManager.LoadSceneAsync("Restaurant", LoadSceneMode.Additive);
-        OtherMenuOpened();
     }
     private void OpenVehicleShop()
     {
         SceneManager.LoadSceneAsync("Vehicle_Shop", LoadSceneMode.Additive);
         AudioManager.PlaySound("Shop Chime");
-        OtherMenuOpened();
     }
     private void OpenGasShop()
     {
         SceneManager.LoadSceneAsync("Gas_Shop", LoadSceneMode.Additive);
-        OtherMenuOpened();
     }
     public void OpenSceneWithTransition(string sceneName, string transitionEventName)
     {
@@ -191,8 +196,8 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         AsyncOperation loadNewArea = SceneManager.LoadSceneAsync(newArea.ToString(), LoadSceneMode.Additive);
-        SceneManager.UnloadSceneAsync(currentArea.ToString());
-        while (!loadNewArea.isDone)
+        AsyncOperation unloadOldArea = SceneManager.UnloadSceneAsync(currentArea.ToString());
+        while (!loadNewArea.isDone || !unloadOldArea.isDone)
         {
             yield return null;
         }
@@ -265,6 +270,7 @@ public class GameManager : MonoBehaviour
         }
         EventMessenger.TriggerEvent("SetPlayerCanActTrue");
         EventMessenger.TriggerEvent("UpdatePOIPointers");
+        ObjectPoolManager.ResetPool("POIIndicators");
         EventMessenger.TriggerEvent("UpdatePOIIndicators");
         yield break;
     }

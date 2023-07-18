@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CustomerInteractable : MonoBehaviour, IInteractable
 {
@@ -9,14 +10,10 @@ public class CustomerInteractable : MonoBehaviour, IInteractable
     public float interactRange { get; private set; }
     private void OnEnable()
     {
-        //EventMessenger.StartListening("ResetPOIIDs", ResetIDs);
-
         EventMessenger.StartListening("UpdatePOIIndicators", UpdatePOIIndicator);
     }
     private void OnDisable()
     {
-        //EventMessenger.StopListening("ResetPOIIDs", ResetIDs);
-
         EventMessenger.StopListening("UpdatePOIIndicators", UpdatePOIIndicator);
     }
     private void Awake()
@@ -25,11 +22,15 @@ public class CustomerInteractable : MonoBehaviour, IInteractable
         POIManager.ID++;
 
         interactRange = 0.1f;
-        Debug.Log(id);
     }
     public void OnInteract()
     {
-        Debug.Log("order " + id + ": " + POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, id)]);
+        if (POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, id)] > 0)
+        {
+            SceneManager.LoadSceneAsync("Deliver_Confirmation", LoadSceneMode.Additive);
+            PrimitiveMessenger.EditObject("CoinfallBaseAmount", Random.Range(5f, 10f));
+            POIManager.CompleteOrder(GameManager.currentArea, id);
+        }
     }
     private void UpdatePOIIndicator()
     {
@@ -38,7 +39,8 @@ public class CustomerInteractable : MonoBehaviour, IInteractable
         {
             POIManager.AddPOIIndicator(transform.position);
         }
-        else if (ObjectPoolManager.GetPooledObject("POIIndicators", transform.position) != null)
+        else if (POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, id)] == 0 && 
+            ObjectPoolManager.GetPooledObject("POIIndicators", transform.position))
         {
             ObjectPoolManager.GetPooledObject("POIIndicators", transform.position).SetActive(false);
         }

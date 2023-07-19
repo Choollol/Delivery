@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonUtil : MonoBehaviour
+public class ImageUtil : MonoBehaviour
 {
     public bool canChangeOpacity;
 

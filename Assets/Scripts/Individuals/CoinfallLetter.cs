@@ -8,7 +8,7 @@ public class CoinfallLetter : MonoBehaviour
     private KeyCode id;
     private void Awake()
     {
-        id = PrimitiveMessenger.GetObject("NewCoinfallLetter");
+        id = PrimitiveMessenger.GetObject("newCoinfallLetter");
         GetComponent<TextMeshProUGUI>().text = id.ToString();
     }
 
@@ -22,6 +22,10 @@ public class CoinfallLetter : MonoBehaviour
     }
     private void DeleteLetter()
     {
-        Destroy(gameObject);
+        if (PrimitiveMessenger.GetObject("doDeleteLetter"))
+        {
+            Destroy(gameObject);
+            PrimitiveMessenger.EditObject("doDeleteLetter", false);
+        }
     }
 }

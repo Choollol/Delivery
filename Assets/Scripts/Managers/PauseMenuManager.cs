@@ -13,7 +13,7 @@ public class PauseMenuManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> tabButtonList;
 
-    private Dictionary<string, ButtonUtil> tabButtonDict = new Dictionary<string, ButtonUtil>();
+    private Dictionary<string, ImageUtil> tabButtonDict = new Dictionary<string, ImageUtil>();
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -29,7 +29,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         foreach (GameObject tab in tabButtonList)
         {
-            tabButtonDict.Add(tab.name, tab.GetComponent<ButtonUtil>());
+            tabButtonDict.Add(tab.name, tab.GetComponent<ImageUtil>());
         }
 
         UIManager.doStayMain = true;
@@ -69,7 +69,7 @@ public class PauseMenuManager : MonoBehaviour
     }
     private void UpdateUI()
     {
-        foreach (ButtonUtil tabButton in tabButtonDict.Values)
+        foreach (ImageUtil tabButton in tabButtonDict.Values)
         {
             tabButton.canChangeOpacity = true;
             tabButton.SetOpacity(0.5f);

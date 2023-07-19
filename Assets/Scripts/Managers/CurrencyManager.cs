@@ -44,7 +44,7 @@ public class CurrencyManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftBracket))
         {
-            SpawnCoins(50, 0);
+            SpawnCoins(500, 0);
         }
         if (Input.GetKeyDown(KeyCode.RightBracket))
         {

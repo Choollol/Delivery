@@ -67,6 +67,10 @@ public class POIManager : MonoBehaviour
     void Start()
     {
         ObjectPoolManager.AddPool("POIIndicators", poiIndicator, 20, poiIndicatorsHolder);
+
+        StartCoroutine(AddSupplierPOI());
+
+        UpdatePOIPointers();
     }
     public static void AddCustomerPOI(int orders)
     {
@@ -102,7 +106,7 @@ public class POIManager : MonoBehaviour
     }
     private IEnumerator AddSupplierPOI()
     {
-        if (RestaurantManager.ingredients < 20)
+        if (RestaurantManager.ingredients < 10)
         {
             supplierTimer = 5;
         }
@@ -122,10 +126,11 @@ public class POIManager : MonoBehaviour
                     int id = UnityEngine.Random.Range(0, areaPOICounts[GameManager.Area.Market]);
                     poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] += 
                         UnityEngine.Random.Range(1, 4);
-                    if (poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] > 50)
+                    if (poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] > 12)
                     {
-                        poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] = 50;
+                        poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] = 12;
                     }
+                    poiCounts[GameManager.Area.Market]++;
                     break;
                 }
             case 1:
@@ -135,9 +140,11 @@ public class POIManager : MonoBehaviour
                     {
                         poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] = 50;
                     }
+                    poiCounts[GameManager.Area.Farm]++;
                     break;
                 }
         }
+        UpdatePOIPointers();
         while (!GameManager.isGameActive)
         {
             yield return null;
@@ -148,11 +155,13 @@ public class POIManager : MonoBehaviour
     public static void CompleteOrder(GameManager.Area area, int id)
     {
         poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] = 0;
+        poiCounts[area]--;
         EventMessenger.TriggerEvent("UpdatePOIIndicators");
+        Instance.UpdatePOIPointers();
     }
     public static void AddPOIIndicator(Vector3 targetPos)
     {
-        ObjectPoolManager.PullFromPool("POIIndicators", targetPos); //+ new Vector3(0, 0.12f));
+        ObjectPoolManager.PullFromPool("POIIndicators", targetPos);
     }
     private void UpdatePOIPointers()
     {
@@ -229,6 +238,14 @@ public class POIManager : MonoBehaviour
                     }
                     break;
                 }
+        }
+        if (poiCounts[GameManager.currentArea] > 0)
+        {
+            EventMessenger.TriggerEvent("EnableCurrentPOIPointer");
+        }
+        else
+        {
+            EventMessenger.TriggerEvent("DisableCurrentPOIPointer");
         }
     }
     

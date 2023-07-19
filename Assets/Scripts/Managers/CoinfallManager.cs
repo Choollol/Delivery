@@ -22,9 +22,9 @@ public class CoinfallManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI countdownText;
     [SerializeField] private TextMeshProUGUI gameOverText;
 
-    private static float coinSpawnInterval = 3;
+    private static float coinSpawnInterval;
     private static float coinSpawnIntervalDecrementAmount = 0.001f;
-    public static float coinSpeed = 30f;
+    public static float coinSpeed;
     private static float coinSpeedIncrementAmount = 0.1f;
 
     private int score;
@@ -32,10 +32,14 @@ public class CoinfallManager : MonoBehaviour
     private void OnEnable()
     {
         PrimitiveMessenger.AddObject("isRightKeyPressed", false);
+        PrimitiveMessenger.AddObject("isCoinClicked", false);
+
         EventMessenger.StartListening("LoseLife", LoseLife);
         EventMessenger.StartListening("AddScore", AddScore);
 
-        PrimitiveMessenger.AddObject("NewCoinfallLetter", KeyCode.A);
+        PrimitiveMessenger.AddObject("newCoinfallLetter", KeyCode.A);
+
+        PrimitiveMessenger.AddObject("doDeleteLetter", false);
 
         EventMessenger.StartListening("BeginCoinfall", BeginGame);
         EventMessenger.StartListening("CloseCoinfall", CloseCoinfall);
@@ -43,10 +47,14 @@ public class CoinfallManager : MonoBehaviour
     private void OnDisable()
     {
         PrimitiveMessenger.RemoveObject("isRightKeyPressed");
+        PrimitiveMessenger.RemoveObject("isCoinClicked");
+
         EventMessenger.StopListening("LoseLife", LoseLife);
         EventMessenger.StopListening("AddScore", AddScore);
 
-        PrimitiveMessenger.RemoveObject("NewCoinfallLetter");
+        PrimitiveMessenger.RemoveObject("newCoinfallLetter");
+
+        PrimitiveMessenger.RemoveObject("doDeleteLetter");
 
         EventMessenger.StopListening("BeginCoinfall", BeginGame);
         EventMessenger.StopListening("CloseCoinfall", CloseCoinfall);
@@ -63,6 +71,9 @@ public class CoinfallManager : MonoBehaviour
         SceneManager.SetActiveScene(gameObject.scene);
 
         ObjectPoolManager.AddPool("CoinfallCoins", coinfallCoin, 50, coinfallCanvas.transform.Find("Coins Holder").gameObject);
+
+        coinSpawnInterval = 3;
+        coinSpeed = 30f;
 
         if (hasCompletedTutorial)
         {
@@ -89,16 +100,29 @@ public class CoinfallManager : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (isInGame && Input.anyKeyDown && coinfallKeys.Contains(Input.inputString) && 
-            Input.inputString != "")
+        if (isInGame && Input.anyKeyDown)
         {
-            if (PrimitiveMessenger.GetObject("isRightKeyPressed"))
+            if (coinfallKeys.Contains(Input.inputString) && Input.inputString != "")
             {
-                PrimitiveMessenger.EditObject("isRightKeyPressed", false);
+                if (PrimitiveMessenger.GetObject("isRightKeyPressed"))
+                {
+                    PrimitiveMessenger.EditObject("isRightKeyPressed", false);
+                }
+                else
+                {
+                    LoseLife();
+                }
             }
-            else
+            else if (Input.GetMouseButtonDown(0))
             {
-                LoseLife();
+                if (PrimitiveMessenger.GetObject("isCoinClicked"))
+                {
+                    PrimitiveMessenger.EditObject("isCoinClicked", false);
+                }
+                else
+                {
+                    LoseLife();
+                }
             }
         }
     }
@@ -109,7 +133,7 @@ public class CoinfallManager : MonoBehaviour
         ObjectPoolManager.PullFromPool("CoinfallCoins");
         Instantiate(coinfallLetter, coinfallLetterHolder.transform);
 
-        PrimitiveMessenger.EditObject("NewCoinfallLetter",
+        PrimitiveMessenger.EditObject("newCoinfallLetter",
             (KeyCode)(UnityEngine.Random.Range((int)Enum.Parse<KeyCode>("A"), (int)Enum.Parse<KeyCode>("Z") + 1)));
 
         if (isInGame)

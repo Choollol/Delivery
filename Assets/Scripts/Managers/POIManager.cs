@@ -124,23 +124,24 @@ public class POIManager : MonoBehaviour
             case 0:
                 {
                     int id = UnityEngine.Random.Range(0, areaPOICounts[GameManager.Area.Market]);
-                    poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] += 
-                        UnityEngine.Random.Range(1, 4);
+                    int orders = UnityEngine.Random.Range(1, 4);
+                    poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] += orders;
                     if (poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] > 12)
                     {
                         poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Market, id)] = 12;
                     }
-                    poiCounts[GameManager.Area.Market]++;
+                    poiCounts[GameManager.Area.Market] += orders;
                     break;
                 }
             case 1:
                 {
-                    poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] += UnityEngine.Random.Range(2, 6);
+                    int orders = UnityEngine.Random.Range(2, 6);
+                    poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] += orders;
                     if (poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] > 50)
                     {
                         poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.Area.Farm, 0)] = 50;
                     }
-                    poiCounts[GameManager.Area.Farm]++;
+                    poiCounts[GameManager.Area.Farm] += orders;
                     break;
                 }
         }
@@ -154,10 +155,19 @@ public class POIManager : MonoBehaviour
     }
     public static void CompleteOrder(GameManager.Area area, int id)
     {
+        PrimitiveMessenger.EditObject("dishesToDropOff", poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)]);
+        EventMessenger.TriggerEvent("DropOffDishesCapacity");
+        poiCounts[area] -= poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)];
         poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] = 0;
-        poiCounts[area]--;
         EventMessenger.TriggerEvent("UpdatePOIIndicators");
         Instance.UpdatePOIPointers();
+        Debug.Log(poiCounts[area] + " " + area);
+    }
+    public static void PickUpIngredients(GameManager.Area area, int id)
+    {
+        PrimitiveMessenger.EditObject("ingredientsToPickUp", poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)]);
+        EventMessenger.TriggerEvent("PickUpIngredients");
+        poiCounts[area] -= poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)];
     }
     public static void AddPOIIndicator(Vector3 targetPos)
     {

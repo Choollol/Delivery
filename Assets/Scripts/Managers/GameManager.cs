@@ -252,7 +252,7 @@ public class GameManager : MonoBehaviour
                 }
             case Area.City:
                 {
-                    BoundsManager.SetBounds(-6.4f, 6.4f, -2.72f, 1.72f);
+                    BoundsManager.SetBounds(-6.4f, 6.4f, -1.72f, 1.72f);
                     currentPlayer.transform.position = new Vector3(BoundsManager.GetBounds()[1], 0, currentPlayer.transform.position.z);
                     break;
                 }

@@ -26,7 +26,8 @@ public class SupplierInteractable : MonoBehaviour, IInteractable
     {
         if (POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, id)] > 0)
         {
-            POIManager.CompleteOrder(GameManager.currentArea, id);
+            //POIManager.CompleteOrder(GameManager.currentArea, id);
+            POIManager.PickUpIngredients(GameManager.currentArea, id);
         }
     }
     private void UpdatePOIIndicator()

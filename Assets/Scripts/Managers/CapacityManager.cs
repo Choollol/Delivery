@@ -14,10 +14,14 @@ public class CapacityManager : MonoBehaviour
         PrimitiveMessenger.AddObject("capacityInUse", capacityInUse);
 
         EventMessenger.StartListening("PickUpDishesCapacity", PickUpDishes);
+        EventMessenger.StartListening("DropOffDishesCapacity", DropOffDishes);
         EventMessenger.StartListening("PickUpIngredients", PickUpIngredients);
         EventMessenger.StartListening("DropOffIngredients", DropOffIngredients);
 
         PrimitiveMessenger.AddObject("ingredientsToPickUp", 0);
+        PrimitiveMessenger.AddObject("ingredientsToDropOff", 0);
+        PrimitiveMessenger.AddObject("dishesToPickUp", 0);
+        PrimitiveMessenger.AddObject("dishesToDropOff", 0);
     }
     private void OnDisable()
     {
@@ -25,9 +29,14 @@ public class CapacityManager : MonoBehaviour
         PrimitiveMessenger.RemoveObject("capacityInUse");
 
         EventMessenger.StopListening("PickUpDishesCapacity", PickUpDishes);
+        EventMessenger.StopListening("DropOffDishesCapacity", DropOffDishes);
         EventMessenger.StopListening("PickUpIngredients", PickUpIngredients);
         EventMessenger.StopListening("DropOffIngredients", DropOffIngredients);
+
         PrimitiveMessenger.RemoveObject("ingredientsToPickUp");
+        PrimitiveMessenger.RemoveObject("ingredientsToDropOff");
+        PrimitiveMessenger.RemoveObject("dishesToPickUp");
+        PrimitiveMessenger.RemoveObject("dishesToDropOff");
     }
     private void Awake()
     {
@@ -35,8 +44,8 @@ public class CapacityManager : MonoBehaviour
     }
     private void PickUpDishes()
     {
-        capacityInUse += PrimitiveMessenger.GetObject("numOfDishes");
-        dishes += PrimitiveMessenger.GetObject("numOfDishes");
+        capacityInUse += PrimitiveMessenger.GetObject("dishesToPickUp");
+        dishes += PrimitiveMessenger.GetObject("dishesToPickUp");
         if (capacityInUse > maxCapacity)
         {
             dishes -= capacityInUse - maxCapacity;
@@ -46,8 +55,8 @@ public class CapacityManager : MonoBehaviour
     }
     private void PickUpIngredients()
     {
-        capacityInUse += 2;//PrimitiveMessenger.GetObject("ingredientsToPickUp");
-        ingredients += 2;//PrimitiveMessenger.GetObject("ingredientsToPickUp");
+        capacityInUse += PrimitiveMessenger.GetObject("ingredientsToPickUp");
+        ingredients += PrimitiveMessenger.GetObject("ingredientsToPickUp");
         if (capacityInUse > maxCapacity)
         {
             ingredients -= capacityInUse - maxCapacity;
@@ -57,14 +66,14 @@ public class CapacityManager : MonoBehaviour
     }
     private void DropOffDishes()
     {
-        capacityInUse -= dishes;
-        dishes = 0;
+        capacityInUse -= PrimitiveMessenger.GetObject("dishesToDropOff");
+        dishes -= PrimitiveMessenger.GetObject("dishesToDropOff");
         UpdateCapacity();
     }
     private void DropOffIngredients()
     {
-        capacityInUse -= ingredients;
-        ingredients = 0;
+        capacityInUse -= PrimitiveMessenger.GetObject("ingredientsToDropOff");
+        ingredients -= PrimitiveMessenger.GetObject("ingredientsToDropOff");
         UpdateCapacity();
     }
     private void UpdateCapacity()

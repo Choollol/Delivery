@@ -18,7 +18,17 @@ public class RestaurantManager : MonoBehaviour
 
     public void DropOffIngredients()
     {
-        ingredients += CapacityManager.ingredients;
+        int ingredientsToDropOff;
+        if (ingredients + CapacityManager.ingredients > maxIngredients)
+        {
+            ingredientsToDropOff = maxIngredients - CapacityManager.ingredients;
+        }
+        else
+        {
+            ingredientsToDropOff = CapacityManager.ingredients;
+        }
+        ingredients += ingredientsToDropOff;
+        PrimitiveMessenger.EditObject("ingredientsToDropOff", ingredientsToDropOff);
         EventMessenger.TriggerEvent("DropOffIngredients");
         if (ingredients > maxIngredients)
         {

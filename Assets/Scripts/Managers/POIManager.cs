@@ -161,13 +161,25 @@ public class POIManager : MonoBehaviour
         poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] = 0;
         EventMessenger.TriggerEvent("UpdatePOIIndicators");
         Instance.UpdatePOIPointers();
-        Debug.Log(poiCounts[area] + " " + area);
     }
     public static void PickUpIngredients(GameManager.Area area, int id)
     {
-        PrimitiveMessenger.EditObject("ingredientsToPickUp", poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)]);
+        int spaceAvailable = PrimitiveMessenger.GetObject("maxCapacity") - PrimitiveMessenger.GetObject("capacityInUse");
+        int ingredientsToPickUp;
+        if (spaceAvailable >= poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)])
+        {
+            ingredientsToPickUp = poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)];
+        }
+        else
+        {
+            ingredientsToPickUp = spaceAvailable;
+        }
+        PrimitiveMessenger.EditObject("ingredientsToPickUp", ingredientsToPickUp);
         EventMessenger.TriggerEvent("PickUpIngredients");
-        poiCounts[area] -= poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)];
+        poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] -= ingredientsToPickUp;
+        poiCounts[area] -= ingredientsToPickUp;
+        EventMessenger.TriggerEvent("UpdatePOIIndicators");
+        Instance.UpdatePOIPointers();
     }
     public static void AddPOIIndicator(Vector3 targetPos)
     {

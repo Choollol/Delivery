@@ -13,6 +13,8 @@ public class POIManager : MonoBehaviour
 
     public static int ID = 0;
 
+    public static int currentOrderID;
+
     [SerializeField] private GameObject poiIndicator;
     [SerializeField] private GameObject poiIndicatorsHolder;
 
@@ -21,13 +23,15 @@ public class POIManager : MonoBehaviour
     [SerializeField] private GameObject upPointer;
     [SerializeField] private GameObject downPointer;
 
-    private static Dictionary<GameManager.Area, int> areaPOICounts = new Dictionary<GameManager.Area, int>(); // Total POIs
+    public static Dictionary<GameManager.Area, int> areaPOICounts { get; private set; }  // Total POIs
 
-    private static Dictionary<GameManager.Area, int> poiCounts = new Dictionary<GameManager.Area, int>(); // Current POIs
+    public static Dictionary<GameManager.Area, int> poiCounts = new Dictionary<GameManager.Area, int>(); // Current POIs
 
-    public static Dictionary<KeyValuePair<GameManager.Area, int>, int> poiOrders { get; private set; } // Area, ID, Number of orders
+    public static Dictionary<KeyValuePair<GameManager.Area, int>, int> poiOrders = 
+        new Dictionary<KeyValuePair<GameManager.Area, int>, int>(); // Area, ID, Number of orders
 
-    private float supplierTimer = 5;
+    private static float supplierTimer = 5;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -39,13 +43,15 @@ public class POIManager : MonoBehaviour
             instance = this;
         }
 
-        poiOrders = new Dictionary<KeyValuePair<GameManager.Area, int>, int>();
+        areaPOICounts = new Dictionary<GameManager.Area, int>
+        {
+            { GameManager.Area.Overworld, 8 },
+            { GameManager.Area.Market, 4 },
+            { GameManager.Area.Farm, 1 },
+            { GameManager.Area.Suburbs, 8 },
+            { GameManager.Area.City, 9 }
+        };
 
-        areaPOICounts.Add(GameManager.Area.Overworld, 8);
-        areaPOICounts.Add(GameManager.Area.Market, 4);
-        areaPOICounts.Add(GameManager.Area.Farm, 1);
-        areaPOICounts.Add(GameManager.Area.Suburbs, 8);
-        areaPOICounts.Add(GameManager.Area.City, 9);
         foreach (GameManager.Area area in Enum.GetValues(typeof(GameManager.Area)))
         {
             poiCounts.Add(area, 0);
@@ -59,10 +65,14 @@ public class POIManager : MonoBehaviour
     private void OnEnable()
     {
         EventMessenger.StartListening("UpdatePOIPointers", UpdatePOIPointers);
+
+        EventMessenger.StartListening("CompleteOrder", CompleteOrder);
     }
     private void OnDisable()
     {
         EventMessenger.StopListening("UpdatePOIPointers", UpdatePOIPointers);
+
+        EventMessenger.StopListening("CompleteOrder", CompleteOrder);
     }
     void Start()
     {
@@ -102,7 +112,7 @@ public class POIManager : MonoBehaviour
         }
         poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] += orders;
         poiCounts[area]++;
-        Instance.UpdatePOIPointers();
+        UpdateUI();
     }
     private IEnumerator AddSupplierPOI()
     {
@@ -145,7 +155,7 @@ public class POIManager : MonoBehaviour
                     break;
                 }
         }
-        UpdatePOIPointers();
+        UpdateUI();
         while (!GameManager.isGameActive)
         {
             yield return null;
@@ -153,14 +163,14 @@ public class POIManager : MonoBehaviour
         StartCoroutine(AddSupplierPOI());
         yield break;
     }
-    public static void CompleteOrder(GameManager.Area area, int id)
+    public static void CompleteOrder()
     {
-        PrimitiveMessenger.EditObject("dishesToDropOff", poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)]);
+        PrimitiveMessenger.EditObject("dishesToDropOff", 
+            poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, currentOrderID)]);
         EventMessenger.TriggerEvent("DropOffDishesCapacity");
-        poiCounts[area] -= poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)];
-        poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] = 0;
-        EventMessenger.TriggerEvent("UpdatePOIIndicators");
-        Instance.UpdatePOIPointers();
+        poiCounts[GameManager.currentArea] -= poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, currentOrderID)];
+        poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, currentOrderID)] = 0;
+        UpdateUI();
     }
     public static void PickUpIngredients(GameManager.Area area, int id)
     {
@@ -174,12 +184,16 @@ public class POIManager : MonoBehaviour
         {
             ingredientsToPickUp = spaceAvailable;
         }
+        if (ingredientsToPickUp == 0)
+        {
+            return;
+        }
+        AudioManager.PlaySound("Supplier Pick Up Sound");
         PrimitiveMessenger.EditObject("ingredientsToPickUp", ingredientsToPickUp);
         EventMessenger.TriggerEvent("PickUpIngredients");
         poiOrders[new KeyValuePair<GameManager.Area, int>(area, id)] -= ingredientsToPickUp;
         poiCounts[area] -= ingredientsToPickUp;
-        EventMessenger.TriggerEvent("UpdatePOIIndicators");
-        Instance.UpdatePOIPointers();
+        UpdateUI();
     }
     public static void AddPOIIndicator(Vector3 targetPos)
     {
@@ -270,7 +284,11 @@ public class POIManager : MonoBehaviour
             EventMessenger.TriggerEvent("DisableCurrentPOIPointer");
         }
     }
-    
+    public static void UpdateUI()
+    {
+        Instance.UpdatePOIPointers();
+        EventMessenger.TriggerEvent("UpdatePOIIndicators");
+    }
     private void ResetPointers()
     {
         leftPointer.SetActive(false);

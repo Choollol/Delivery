@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -100,7 +101,7 @@ public class CoinfallManager : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (isInGame && Input.anyKeyDown)
+        if (isInGame && Input.anyKeyDown && GameManager.isGameActive)
         {
             if (coinfallKeys.Contains(Input.inputString) && Input.inputString != "")
             {
@@ -152,6 +153,7 @@ public class CoinfallManager : MonoBehaviour
             isInGame = false;
             StartCoroutine(EndGame());
         }
+        AudioManager.PlaySound("Coinfall Life Lost Sound");
     }
     private void AddScore()
     {
@@ -178,25 +180,28 @@ public class CoinfallManager : MonoBehaviour
         AudioManager.PlaySound("Coinfall Countdown Sound");
         yield return new WaitForSeconds(1);
         countdownText.text = "2";
+        AudioManager.PlaySound("Coinfall Countdown Sound");
         yield return new WaitForSeconds(1);
         countdownText.text = "1";
+        AudioManager.PlaySound("Coinfall Countdown Sound");
         yield return new WaitForSeconds(1);
         countdownText.text = "Go!";
+        AudioManager.PlaySound("Coinfall Countdown End Sound");
         yield return new WaitForSeconds(1);
         countdownText.gameObject.SetActive(false);
         StartCoroutine(SpawnCoin());
         isInGame = true;
-        //AudioManager.PlaySound("Coinfall BGM");
+        AudioManager.PlaySound("Coinfall Theme");
         yield break;
     }
     private IEnumerator EndGame()
     {
-        //AudioManager.StopSound("Coinfall BGM");
+        StartCoroutine(AudioManager.FadeAudio("Coinfall Theme", 0.5f, 0));
         yield return new WaitForSeconds(2);
         gameOverText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         gameOverText.text = "Final Score: " + score;
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2);
         ObjectPoolManager.RemovePoolKey("CoinfallCoins");
         GameManager.Instance.CloseSceneWithTransition("Coinfall", "CloseCoinfall");
         yield break;

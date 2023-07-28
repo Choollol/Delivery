@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,6 +31,9 @@ public class GameManager : MonoBehaviour
     public static bool isMenuOnMain;
     public static string menuName;
     public static Area currentArea { get; private set; }
+
+    public static bool hasKeycard = false;
+    public static bool isKeycardUIEnabled = false;
 
     private void Awake()
     {
@@ -98,6 +102,10 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadSceneAsync("Pause_Menu", LoadSceneMode.Additive);
             }
         }
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            OpenCoinfall();
+        }
     }
     private void OpenCoinfall()
     {
@@ -123,6 +131,7 @@ public class GameManager : MonoBehaviour
     private void OpenRestaurant()
     {
         SceneManager.LoadSceneAsync("Restaurant", LoadSceneMode.Additive);
+        AudioManager.PlaySound("Shop Chime");
     }
     private void OpenVehicleShop()
     {
@@ -132,6 +141,7 @@ public class GameManager : MonoBehaviour
     private void OpenGasShop()
     {
         SceneManager.LoadSceneAsync("Gas_Shop", LoadSceneMode.Additive);
+        AudioManager.PlaySound("Gas Shop Open Sound");
     }
     public void OpenSceneWithTransition(string sceneName, string transitionEventName)
     {
@@ -139,6 +149,8 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator HandleOpenSceneWithTransition(string sceneName, string transitionEventName)
     {
+        StartCoroutine(AudioManager.FadeAudio(currentArea + " Theme", 0.5f, 0));
+        EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         StartTransition();
         doContinueTransition = false;
         while (!doContinueTransition)
@@ -177,6 +189,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator HandleSwitchArea(Area newArea)
     {
+        StartCoroutine(AudioManager.FadeAudio(currentArea + " Theme", 0.5f, 0));
         EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         POIManager.ID = 0;
         StartTransition();

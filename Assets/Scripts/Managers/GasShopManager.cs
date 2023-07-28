@@ -75,8 +75,8 @@ public class GasShopManager : MonoBehaviour
     public void UpdateTexts()
     {
         percentageText.text = "% of missing fuel: " + (int)(slider.value * 100) + "%";
-        costText.text = ((int)(gasCost * slider.value * 
-            (PrimitiveMessenger.GetObject("maxVehicleFuel") - PrimitiveMessenger.GetObject("currentVehicleFuel")))).ToString();
+        costText.text = Mathf.Ceil(gasCost * slider.value * 
+            (PrimitiveMessenger.GetObject("maxVehicleFuel") - PrimitiveMessenger.GetObject("currentVehicleFuel"))).ToString();
         cost = int.Parse(costText.text);
     }
     private void UpdateUI()

@@ -21,7 +21,7 @@ public class RestaurantManager : MonoBehaviour
         int ingredientsToDropOff;
         if (ingredients + CapacityManager.ingredients > maxIngredients)
         {
-            ingredientsToDropOff = maxIngredients - CapacityManager.ingredients;
+            ingredientsToDropOff = maxIngredients - ingredients;
         }
         else
         {
@@ -36,10 +36,6 @@ public class RestaurantManager : MonoBehaviour
         }
         PrimitiveMessenger.EditObject("ingredients", ingredients);
         EventMessenger.TriggerEvent("UpdateIngredientsText");
-    }
-    public static int GetIngredients()
-    {
-        return ingredients;
     }
     public static void UseIngredients(int ingredientsUsed)
     {

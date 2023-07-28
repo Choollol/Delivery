@@ -34,6 +34,8 @@ public class CurrencyManager : MonoBehaviour
             instance = this;
         }
 
+        coins = 80;
+
     }
     private void Start()
     {

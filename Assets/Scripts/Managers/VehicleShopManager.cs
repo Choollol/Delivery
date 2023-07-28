@@ -31,6 +31,9 @@ public class VehicleShopManager : MonoBehaviour
     private TextMeshProUGUI descriptionText;
     private GameObject popupPriceUI;
     private TextMeshProUGUI popupPriceText;
+
+    private int keycardPrice = 2000;
+    [SerializeField] private GameObject keycardButton;
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -97,9 +100,29 @@ public class VehicleShopManager : MonoBehaviour
         popupPriceText = popupPriceUI.transform.Find("Text").GetComponent<TextMeshProUGUI>();
         popupUI.SetActive(false);
 
+        if (GameManager.isKeycardUIEnabled)
+        {
+            keycardButton.SetActive(true);
+        }
+
         UpdateItemAvailabilities();
     }
-
+    public void PurchaseKeycard()
+    {
+        if (CurrencyManager.coins >= keycardPrice)
+        {
+            GameManager.hasKeycard = true;
+            UIManager.Instance.SwitchUI("Main UI");
+            keycardButton.SetActive(false);
+            GameManager.isKeycardUIEnabled = false;
+            CurrencyManager.Instance.DecreaseCoins(keycardPrice);
+            AudioManager.PlaySound("Purchase Sound");
+        }
+        else
+        {
+            AudioManager.PlaySound("Purchase Fail Sound");
+        }
+    }
     public void OpenPopup(string description, float fontSize, bool doShowPrice, Vector2 itemPosition, int itemPrice)
     {
         popupUI.SetActive(true);
@@ -151,6 +174,12 @@ public class VehicleShopManager : MonoBehaviour
         VehicleManager.SetVehicleType((VehicleManager.VehicleType)((int)VehicleManager.currentVehicleType + 1));
 
         vehicles.transform.GetChild((int)VehicleManager.currentVehicleType - 1).gameObject.SetActive(true);
+
+        if (VehicleManager.currentVehicleType == VehicleManager.VehicleType.Truck)
+        {
+            keycardButton.SetActive(true);
+            GameManager.isKeycardUIEnabled = true;
+        }
 
         UpdateItemAvailabilities();
     }

@@ -11,7 +11,7 @@ public class CharacterMovement : SpriteMovement
     public void OnFootstep()
     {
         string key;
-        Collider2D collider = Physics2D.OverlapPoint(new Vector2(transform.position.x, transform.position.y), 
+        Collider2D collider = Physics2D.OverlapPoint(new Vector2(transform.position.x, transform.position.y),
             LayerMask.GetMask("Tilemap"), 0, 10);
         key = collider.name;
         AudioSource sound = AudioManager.GetSound(key + " Step");

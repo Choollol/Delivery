@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class DishManager : MonoBehaviour
 {
-    private int numOfDishes = 0;
-    private int maxDishes = 100;
+    private static int numOfDishes = 0;
+    private static int maxDishes = 100;
 
-    private int minCookDishes = 1;
-    private int maxCookDishes = 5;
+    private static int minCookDishes = 1;
+    private static int maxCookDishes = 5;
 
-    private float cookCooldown = 5;
-    private float minCookCooldown = 2f; //5f
-    private float maxCookCooldown = 3f; //20f
+    private static float cookCooldown = 5;
+    private static float minCookCooldown = 2f; //5f
+    private static float maxCookCooldown = 3f; //20f
 
     private void OnEnable()
     {
@@ -36,7 +36,7 @@ public class DishManager : MonoBehaviour
     {
         yield return new WaitForSeconds(cookCooldown);
         int dishesToCook = Random.Range(minCookDishes, maxCookDishes);
-        if (RestaurantManager.GetIngredients() > 0)
+        if (RestaurantManager.ingredients > 0)
         {
             numOfDishes += dishesToCook;
             if (numOfDishes > maxDishes)
@@ -44,8 +44,7 @@ public class DishManager : MonoBehaviour
                 numOfDishes = maxDishes;
             }
         }
-        PrimitiveMessenger.EditObject("numOfDishes", numOfDishes);
-        EventMessenger.TriggerEvent("UpdateDishesText");
+        UpdateDishes();
         RestaurantManager.UseIngredients(dishesToCook);
         cookCooldown = Random.Range(minCookCooldown, maxCookCooldown);
         while (!GameManager.isGameActive)
@@ -73,8 +72,16 @@ public class DishManager : MonoBehaviour
             POIManager.AddCustomerPOI(1);
         }
         numOfDishes -= dishesToPickUp;
+        UpdateDishes();
+    }
+    public static void SetDishes(int dishes)
+    {
+        numOfDishes = dishes;
+        UpdateDishes();
+    }
+    private static void UpdateDishes()
+    {
         PrimitiveMessenger.EditObject("numOfDishes", numOfDishes);
         EventMessenger.TriggerEvent("UpdateDishesText");
-        EventMessenger.TriggerEvent("UpdatePOIIndicators");
     }
 }

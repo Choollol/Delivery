@@ -33,8 +33,6 @@ public class FuelBar : MonoBehaviour
 
         startingWidth = rectTransform.sizeDelta.x;
         image = GetComponent<Image>();
-
-        UpdateBar(1);
     }
     private void Update()
     {

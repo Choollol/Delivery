@@ -76,10 +76,21 @@ public class CapacityManager : MonoBehaviour
         ingredients -= PrimitiveMessenger.GetObject("ingredientsToDropOff");
         UpdateCapacity();
     }
-    private void UpdateCapacity()
+    public static void SetIngredients(int newIngredients)
+    {
+        ingredients = newIngredients;
+        capacityInUse += ingredients;
+        UpdateCapacity();
+    }
+    public static void SetDishes(int newDishes)
+    {
+        dishes = newDishes;
+        capacityInUse += dishes;
+        UpdateCapacity();
+    }
+    public static void UpdateCapacity()
     {
         PrimitiveMessenger.EditObject("capacityInUse", capacityInUse);
         EventMessenger.TriggerEvent("UpdateCapacityText");
     }
-
 }

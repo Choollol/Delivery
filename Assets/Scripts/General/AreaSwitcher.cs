@@ -25,5 +25,13 @@ public class AreaSwitcher : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
+        else if (collision.transform.parent.CompareTag("Player"))
+        {
+            if (collision.transform.parent.GetComponent<SpriteAnimator>().direction == direction)
+            {
+                GameManager.Instance.SwitchArea(newArea);
+                gameObject.SetActive(false);
+            }
+        }
     }
 }

@@ -55,6 +55,7 @@ public class TutorialManager : MonoBehaviour
         {
             yield return null;
         }
+        AudioManager.PlaySound("Tutorial Continue Sound");
         tutorialParts[index].SetActive(false);
         index++;
 

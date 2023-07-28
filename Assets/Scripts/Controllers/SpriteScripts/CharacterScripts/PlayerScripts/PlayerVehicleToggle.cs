@@ -5,8 +5,10 @@ using UnityEngine;
 public class PlayerVehicleToggle : MonoBehaviour
 {
     private InputController inputController;
-    private PlayerBounds bounds;
     private SpriteRenderer spriteRenderer;
+    private CharacterMovement characterMovement;
+    private BoxCollider2D boxCollider;
+    private Animator animator;
     private void OnEnable()
     {
         EventMessenger.StartListening("EnterVehicle", EnterVehicle);
@@ -22,23 +24,30 @@ public class PlayerVehicleToggle : MonoBehaviour
     void Start()
     {
         inputController = GetComponent<InputController>();
-        bounds = GetComponent<PlayerBounds>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        characterMovement = GetComponent<CharacterMovement>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
     }
 
     private void EnterVehicle()
     {
         inputController.type = InputController.InputType.None;
-        bounds.enabled = false;
+        inputController.enabled = false;
         spriteRenderer.enabled = false;
-        transform.position += new Vector3(100, 100);
+        characterMovement.enabled = false;
+        boxCollider.enabled = false;
+        animator.enabled = false;
     }
     private void ExitVehicle()
     {
+        inputController.enabled = true;
         inputController.type = InputController.InputType.User;
-        bounds.enabled = true;
         spriteRenderer.enabled = true;
-        transform.position = PrimitiveMessenger.GetObject("vehiclePosition");
+        transform.position = PrimitiveMessenger.GetObject("vehiclePosition") + new Vector3(0, 0.1f);
         CameraMovement.SetFollowTarget(gameObject);
+        characterMovement.enabled = true;
+        boxCollider.enabled = true;
+        animator.enabled = true;
     }
 }

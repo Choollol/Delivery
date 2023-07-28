@@ -20,4 +20,14 @@ public class SaveData
     public float vehicleCurrentFuel;
 
     public bool hasCompletedCoinfallTutorial;
+
+    public int restaurantIngredients;
+    public int restaurantDishes;
+    public int capacityIngredients;
+    public int capacityDishes;
+
+    public List<int> poiOrders = new List<int>();
+
+    public bool hasKeycard;
+    public bool isKeycardUIEnabled;
 }

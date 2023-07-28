@@ -42,7 +42,7 @@ public class AudioManager : MonoBehaviour
         return sounds[key];
     }
 
-    /*public IEnumerator FadeAudio(string key, float duration, float targetVolume)
+    public static IEnumerator FadeAudio(string key, float duration, float targetVolume)
     {
         if (sounds[key].volume == targetVolume) { yield break; }
         float currentTime = 0;
@@ -58,5 +58,5 @@ public class AudioManager : MonoBehaviour
             sounds[key].Stop();
         }
         yield break;
-    }*/
+    }
 }

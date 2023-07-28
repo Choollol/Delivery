@@ -17,7 +17,7 @@ public class SaveManager : MonoBehaviour
     private int saveInterval = 180;
     private void Awake()
     {
-        path = Application.persistentDataPath + "/syonpleqisn.json";
+        path = Application.persistentDataPath + "/save.json";
     }
     void Start()
     {
@@ -36,9 +36,9 @@ public class SaveManager : MonoBehaviour
 
         data.coins = CurrencyManager.coins;
 
+        bool doAdd = data.shopItemKeys.Count == 0;
         if (VehicleShopManager.hasPlayerOpenedShop)
         {
-            bool doAdd = data.shopItemKeys.Count == 0;
             for (int i = 1; i < Enum.GetNames(typeof(VehicleManager.VehicleType)).Length; i++)
             {
                 for (int j = 0; j < Enum.GetNames(typeof(VehicleShopManager.ItemType)).Length; j++)
@@ -74,6 +74,32 @@ public class SaveManager : MonoBehaviour
 
         data.hasCompletedCoinfallTutorial = CoinfallManager.hasCompletedTutorial;
 
+        data.restaurantIngredients = RestaurantManager.ingredients;
+        data.restaurantDishes = PrimitiveMessenger.GetObject("numOfDishes");
+        data.capacityIngredients = CapacityManager.ingredients;
+        data.capacityDishes = CapacityManager.dishes;
+
+        doAdd = data.poiOrders.Count == 0;
+        int numOfAreas = Enum.GetValues(typeof(GameManager.Area)).Length;
+        for (int i = 0; i < numOfAreas; i++)
+        {
+            GameManager.Area area = (GameManager.Area)i;
+            for (int j = 0; j < POIManager.areaPOICounts[area]; j++)
+            {
+                if (doAdd)
+                {
+                    data.poiOrders.Add(POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)]);
+                }
+                else
+                {
+                    data.poiOrders[i * numOfAreas + j] = POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)];
+                }
+            }
+        }
+
+        data.hasKeycard = GameManager.hasKeycard;
+        data.isKeycardUIEnabled = GameManager.isKeycardUIEnabled;
+
         WriteData();
     }
     private void Load() 
@@ -94,15 +120,34 @@ public class SaveManager : MonoBehaviour
         VehicleManager.SetVehicleType(Enum.Parse<VehicleManager.VehicleType>(data.currentVehicleType));
         if (VehicleManager.currentVehicleType != VehicleManager.VehicleType.None)
         {
-            GameObject vehicle = GameObject.Find("Vehicles").transform.Find(VehicleManager.currentVehicleType.ToString().AddSpaces()).gameObject;
+            GameObject vehicle = VehicleManager.vehicle;
 
             vehicle.SetActive(true);
             vehicle.GetComponent<VehicleMovement>().SetSpeed(data.vehicleSpeed);
-            vehicle.GetComponent<VehicleFuel>().SetFuel(data.vehicleMaxFuel, true);
-            vehicle.GetComponent<VehicleFuel>().SetFuel(data.vehicleCurrentFuel, false);
+            VehicleManager.SetFuel(data.vehicleMaxFuel, data.vehicleCurrentFuel);
         }
 
         CoinfallManager.hasCompletedTutorial = data.hasCompletedCoinfallTutorial;
+
+        RestaurantManager.ingredients = data.restaurantIngredients;
+        DishManager.SetDishes(data.restaurantDishes);
+        CapacityManager.SetIngredients(data.capacityIngredients);
+        CapacityManager.SetDishes(data.capacityDishes);
+
+        int numOfAreas = Enum.GetValues(typeof(GameManager.Area)).Length;
+        for (int i = 0; i < numOfAreas; i++)
+        {
+            GameManager.Area area = (GameManager.Area)i;
+            for (int j = 0; j < POIManager.areaPOICounts[area]; j++)
+            {
+                POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)] = data.poiOrders[i * numOfAreas + j];
+                POIManager.poiCounts[area] += data.poiOrders[i * numOfAreas + j];
+            }
+        }
+        POIManager.UpdateUI();
+
+        GameManager.hasKeycard = data.hasKeycard;
+        GameManager.isKeycardUIEnabled = data.isKeycardUIEnabled;
     }
     private void WriteData()
     {

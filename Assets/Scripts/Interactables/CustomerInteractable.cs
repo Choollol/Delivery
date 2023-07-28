@@ -29,7 +29,7 @@ public class CustomerInteractable : MonoBehaviour, IInteractable
             SceneManager.LoadSceneAsync("Deliver_Confirmation", LoadSceneMode.Additive);
             PrimitiveMessenger.EditObject("CoinfallBaseAmount", Random.Range(5f, 7f) *
                 POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, id)]);
-            POIManager.CompleteOrder(GameManager.currentArea, id);
+            POIManager.currentOrderID = id;
         }
     }
     private void UpdatePOIIndicator()

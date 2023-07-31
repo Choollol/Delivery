@@ -44,14 +44,14 @@ public class CurrencyManager : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftBracket))
+        /*if (Input.GetKeyDown(KeyCode.LeftBracket))
         {
-            SpawnCoins(500, 0);
+            SpawnCoins(1000, 0);
         }
         if (Input.GetKeyDown(KeyCode.RightBracket))
         {
             DecreaseCoins(50);  
-        }
+        }*/
     }
     public void SetCoins(int newCoins)
     {

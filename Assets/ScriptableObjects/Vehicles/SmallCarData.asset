@@ -18,8 +18,8 @@ MonoBehaviour:
   downColliderYOffset: 0.29
   colliderDimensionsHorizontal: {x: 0.67, y: 0.4}
   horizontalColliderYOffset: 0.22
-  interactableOffsetDown: {x: 0, y: 0.1}
-  interactableOffsetUp: {x: 0, y: 0.4}
+  interactableOffsetDown: {x: 0, y: 0.15}
+  interactableOffsetUp: {x: 0, y: 0.3}
   interactableOffsetLeft: {x: -0.1, y: 0.1}
   interactableOffsetRight: {x: 0.1, y: 0.1}
-  capacity: 10
+  capacity: 5

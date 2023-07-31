@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RestaurantManager : MonoBehaviour
 {
-    public static int ingredients = 10;
+    public static int ingredients = 30;
     private static int maxIngredients = 100;
 
     private void OnEnable()

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using System;
-using Codice.Client.Common;
 
 public class SaveManager : MonoBehaviour
 {
@@ -36,7 +35,9 @@ public class SaveManager : MonoBehaviour
 
         data.coins = CurrencyManager.coins;
 
-        bool doAdd = data.shopItemKeys.Count == 0;
+        data.shopItemKeys.Clear();
+        data.availabilityCatalogueValues.Clear();
+        data.upgradeAmountsCatalogueValues.Clear();
         if (VehicleShopManager.hasPlayerOpenedShop)
         {
             for (int i = 1; i < Enum.GetNames(typeof(VehicleManager.VehicleType)).Length; i++)
@@ -44,19 +45,10 @@ public class SaveManager : MonoBehaviour
                 for (int j = 0; j < Enum.GetNames(typeof(VehicleShopManager.ItemType)).Length; j++)
                 {
                     string itemID = ((VehicleManager.VehicleType)i).ToString() + (VehicleShopManager.ItemType)j;
-                    int index = (i - 1) * (Enum.GetNames(typeof(VehicleManager.VehicleType)).Length - 1) + j;
-                    if (doAdd)
-                    {
-                        data.shopItemKeys.Add(itemID);
-                        data.availabilityCatalogueValues.Add(VehicleShopManager.availabilityCatalogue[itemID]);
-                        data.upgradeAmountsCatalogueValues.Add(VehicleShopManager.upgradeAmountsCatalogue[itemID]);
-                    }
-                    else
-                    {
-                        data.shopItemKeys[index] = itemID;
-                        data.availabilityCatalogueValues[index] = VehicleShopManager.availabilityCatalogue[itemID];
-                        data.upgradeAmountsCatalogueValues[index] = VehicleShopManager.upgradeAmountsCatalogue[itemID];
-                    }
+
+                    data.shopItemKeys.Add(itemID);
+                    data.availabilityCatalogueValues.Add(VehicleShopManager.availabilityCatalogue[itemID]);
+                    data.upgradeAmountsCatalogueValues.Add(VehicleShopManager.upgradeAmountsCatalogue[itemID]);
                 }
             }
         }
@@ -65,11 +57,22 @@ public class SaveManager : MonoBehaviour
 
         if (VehicleManager.currentVehicleType != VehicleManager.VehicleType.None)
         {
-            VehicleManager.SetVehicleActive(true);
+            bool isVehicleDisabled = false;
+            if (!VehicleManager.vehicle.activeSelf) 
+            {
+                isVehicleDisabled = true;
+            }
+            if (isVehicleDisabled)
+            {
+                VehicleManager.SetVehicleActive(true);
+            }
             data.vehicleSpeed = PrimitiveMessenger.GetObject("vehicleSpeed");
             data.vehicleMaxFuel = PrimitiveMessenger.GetObject("maxVehicleFuel");
             data.vehicleCurrentFuel = PrimitiveMessenger.GetObject("currentVehicleFuel");
-            VehicleManager.SetVehicleActive(false);
+            if (isVehicleDisabled)
+            {
+                VehicleManager.SetVehicleActive(false);
+            }
         }
 
         data.hasCompletedCoinfallTutorial = CoinfallManager.hasCompletedTutorial;
@@ -79,26 +82,23 @@ public class SaveManager : MonoBehaviour
         data.capacityIngredients = CapacityManager.ingredients;
         data.capacityDishes = CapacityManager.dishes;
 
-        doAdd = data.poiOrders.Count == 0;
         int numOfAreas = Enum.GetValues(typeof(GameManager.Area)).Length;
+        data.poiOrders.Clear();
+        int index = 0;
         for (int i = 0; i < numOfAreas; i++)
         {
             GameManager.Area area = (GameManager.Area)i;
             for (int j = 0; j < POIManager.areaPOICounts[area]; j++)
             {
-                if (doAdd)
-                {
-                    data.poiOrders.Add(POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)]);
-                }
-                else
-                {
-                    data.poiOrders[i * numOfAreas + j] = POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)];
-                }
+                data.poiOrders.Add(POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)]);
+                index++;
             }
         }
 
         data.hasKeycard = GameManager.hasKeycard;
         data.isKeycardUIEnabled = GameManager.isKeycardUIEnabled;
+
+        data.coinfallStartingLevel = CoinfallManager.GetStartingLevel();
 
         WriteData();
     }
@@ -135,19 +135,23 @@ public class SaveManager : MonoBehaviour
         CapacityManager.SetDishes(data.capacityDishes);
 
         int numOfAreas = Enum.GetValues(typeof(GameManager.Area)).Length;
+        int index = 0;
         for (int i = 0; i < numOfAreas; i++)
         {
             GameManager.Area area = (GameManager.Area)i;
             for (int j = 0; j < POIManager.areaPOICounts[area]; j++)
             {
-                POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)] = data.poiOrders[i * numOfAreas + j];
-                POIManager.poiCounts[area] += data.poiOrders[i * numOfAreas + j];
+                POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(area, j)] = data.poiOrders[index];
+                POIManager.poiCounts[area] += data.poiOrders[index];
+                index++;
             }
         }
         POIManager.UpdateUI();
 
         GameManager.hasKeycard = data.hasKeycard;
         GameManager.isKeycardUIEnabled = data.isKeycardUIEnabled;
+
+        CoinfallManager.SetStartingLevel(data.coinfallStartingLevel);
     }
     private void WriteData()
     {
@@ -163,7 +167,6 @@ public class SaveManager : MonoBehaviour
             string contents = File.ReadAllText(path);
 
             data = JsonUtility.FromJson<SaveData>(Decrypt(contents));
-            Application.Quit();
         }
         else
         {

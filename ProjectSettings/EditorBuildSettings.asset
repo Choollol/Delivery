@@ -32,4 +32,19 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Areas/City.unity
     guid: 517fd0fbe5ded964bb043b58b82d08d5
+  - enabled: 1
+    path: Assets/Scenes/Pause_Menu.unity
+    guid: 1c58e0f1ceaacdc46a367fca73941520
+  - enabled: 1
+    path: Assets/Scenes/Deliver_Confirmation.unity
+    guid: 58271c9db0c709545b6e1739e2b7b259
+  - enabled: 1
+    path: Assets/Scenes/Restaurant.unity
+    guid: 0f0f70de360e5f3429c14519b9db8eb6
+  - enabled: 1
+    path: Assets/Scenes/Gas_Shop.unity
+    guid: 4ce6bce2e0a750540a08171bb8db38f5
+  - enabled: 1
+    path: Assets/Scenes/Coinfall.unity
+    guid: b67fa01a7dea5994abc3c0c18791a9c2
   m_configObjects: {}

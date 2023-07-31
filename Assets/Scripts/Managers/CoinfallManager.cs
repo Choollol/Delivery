@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,11 +24,15 @@ public class CoinfallManager : MonoBehaviour
 
     private static float coinSpawnInterval;
     private static float coinSpawnIntervalDecrementAmount = 0.001f;
-    public static float coinSpeed;
+    public static float coinSpeed { get; private set; }
     private static float coinSpeedIncrementAmount = 0.1f;
+    private static float maxCoinSpeed = 1000;
 
     private int score;
     private int lives = 3;
+
+    private static int startingLevel = 1;
+    private static int startingLevelMultiplier = 100;
     private void OnEnable()
     {
         PrimitiveMessenger.AddObject("isRightKeyPressed", false);
@@ -76,6 +79,26 @@ public class CoinfallManager : MonoBehaviour
         coinSpawnInterval = 3;
         coinSpeed = 30f;
 
+        if (startingLevel > 25)
+        {
+            coinSpawnInterval = 0.5f;
+            coinSpawnInterval -= (startingLevel - 26) / 5 * coinSpawnIntervalDecrementAmount * startingLevelMultiplier;
+        }
+        else
+        {
+            coinSpawnInterval -= (startingLevel - 1) * coinSpawnIntervalDecrementAmount * startingLevelMultiplier;
+        }
+        if (coinSpawnInterval < 0.2f)
+        {
+            coinSpawnInterval = 0.2f;
+        }
+
+        coinSpeed += (startingLevel - 1) * coinSpeedIncrementAmount * startingLevelMultiplier;
+        if (coinSpeed > maxCoinSpeed)
+        {
+            coinSpeed = maxCoinSpeed;
+        }
+
         if (hasCompletedTutorial)
         {
             EventMessenger.TriggerEvent("SkipTutorial");
@@ -85,7 +108,7 @@ public class CoinfallManager : MonoBehaviour
     {
         if (isInGame)
         {
-            if (coinSpeed < 1000)
+            if (coinSpeed < maxCoinSpeed)
             {
                 coinSpeed += coinSpeedIncrementAmount;
             }
@@ -126,6 +149,37 @@ public class CoinfallManager : MonoBehaviour
                 }
             }
         }
+    }
+    public static void IncrementStartingLevel()
+    {
+        if (startingLevel < 99)
+        {
+            startingLevel++;
+        }
+        else
+        {
+            startingLevel = 1;
+        }
+
+    }
+    public static void DecrementStartingLevel()
+    {
+        if (startingLevel > 1)
+        {
+            startingLevel--;
+        }
+        else
+        {
+            startingLevel = 99;
+        }
+    }
+    public static int GetStartingLevel()
+    {
+        return startingLevel;
+    }
+    public static void SetStartingLevel(int level)
+    {
+        startingLevel = level;
     }
     private IEnumerator SpawnCoin()
     {
@@ -212,6 +266,7 @@ public class CoinfallManager : MonoBehaviour
         EventMessenger.TriggerEvent("EnableScreenUI");
         EventMessenger.TriggerEvent("SetPlayerCanActTrue");
         EventMessenger.TriggerEvent("UnfreezeCamera");
+        EventMessenger.TriggerEvent("CompleteOrder");
 
         int coins = 0;
         if (score < 20)

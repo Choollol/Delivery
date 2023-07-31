@@ -4,24 +4,41 @@ using UnityEngine;
 
 public class EventTriggerer : MonoBehaviour
 {
-    /*[SerializeField] private string[] eventsToTriggerOnAwake;
-    [SerializeField] private string[] eventsToTriggerOnStart;*/
+    [SerializeField] private string[] eventsToTriggerOnAwake;
+    [SerializeField] private string[] eventsToTriggerOnStart;
+    [SerializeField] private string[] eventsToTriggerOnLoad;
+
+    private static bool doTriggerOnLoad = true;
     public void TriggerEvent(string eventName)
     {
         EventMessenger.TriggerEvent(eventName);
     }
-    /*private void Awake()
+    private void Awake()
     {
-        foreach (string eventName in eventsToTriggerOnAwake)
+        if (eventsToTriggerOnAwake != null && eventsToTriggerOnAwake.Length > 0)
         {
-            EventMessenger.TriggerEvent(eventName);
+            foreach (string eventName in eventsToTriggerOnAwake)
+            {
+                EventMessenger.TriggerEvent(eventName);
+            }
         }
     }
     private void Start()
     {
-        foreach (string eventName in eventsToTriggerOnStart)
+        if (eventsToTriggerOnStart != null && eventsToTriggerOnStart.Length > 0)
         {
-            EventMessenger.TriggerEvent(eventName);
+            foreach (string eventName in eventsToTriggerOnStart)
+            {
+                EventMessenger.TriggerEvent(eventName);
+            }
         }
-    }*/
+        if (doTriggerOnLoad && eventsToTriggerOnLoad != null && eventsToTriggerOnLoad.Length > 0)
+        {
+            foreach (string eventName in eventsToTriggerOnLoad)
+            {
+                EventMessenger.TriggerEvent(eventName);
+            }
+            doTriggerOnLoad = false;
+        }
+    }
 }

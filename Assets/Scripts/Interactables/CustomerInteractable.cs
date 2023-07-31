@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class CustomerInteractable : MonoBehaviour, IInteractable
 {
-    private int id;
+    [SerializeField] private int id;
     public float interactRange { get; private set; }
     private void OnEnable()
     {
@@ -17,8 +17,8 @@ public class CustomerInteractable : MonoBehaviour, IInteractable
     }
     private void Awake()
     {
-        id = POIManager.ID;
-        POIManager.ID++;
+        /*id = POIManager.ID;
+        POIManager.ID++;*/
 
         interactRange = 0.15f;
     }

@@ -30,7 +30,7 @@ public class POIManager : MonoBehaviour
     public static Dictionary<KeyValuePair<GameManager.Area, int>, int> poiOrders = 
         new Dictionary<KeyValuePair<GameManager.Area, int>, int>(); // Area, ID, Number of orders
 
-    private static float supplierTimer = 5;
+    private static float supplierTimer = 30;
 
     private void Awake()
     {
@@ -79,8 +79,6 @@ public class POIManager : MonoBehaviour
         ObjectPoolManager.AddPool("POIIndicators", poiIndicator, 20, poiIndicatorsHolder);
 
         StartCoroutine(AddSupplierPOI());
-
-        UpdatePOIPointers();
     }
     public static void AddCustomerPOI(int orders)
     {
@@ -118,15 +116,15 @@ public class POIManager : MonoBehaviour
     {
         if (RestaurantManager.ingredients < 10)
         {
-            supplierTimer = 5;
+            supplierTimer = 60;
         }
         else if (RestaurantManager.ingredients < 50)
         {
-            supplierTimer = 20;
+            supplierTimer = 150;
         }
         else
         {
-            supplierTimer = 60;
+            supplierTimer = 240;
         }
         yield return new WaitForSeconds(supplierTimer);
         switch (UnityEngine.Random.Range(0, 2))
@@ -197,7 +195,10 @@ public class POIManager : MonoBehaviour
     }
     public static void AddPOIIndicator(Vector3 targetPos)
     {
-        ObjectPoolManager.PullFromPool("POIIndicators", targetPos);
+        if (!ObjectPoolManager.GetPooledObject("POIIndicators", targetPos))
+        {
+            ObjectPoolManager.PullFromPool("POIIndicators", targetPos);
+        }
     }
     private void UpdatePOIPointers()
     {

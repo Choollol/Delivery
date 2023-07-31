@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class VehicleAudioController : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
     public void PlayStartAudio()
     {
         StartCoroutine("HandlePlayStartAudio");

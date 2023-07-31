@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class DishManager : MonoBehaviour
 {
-    private static int numOfDishes = 0;
+    private static int numOfDishes = 3;
     private static int maxDishes = 100;
 
     private static int minCookDishes = 1;
     private static int maxCookDishes = 5;
 
     private static float cookCooldown = 5;
-    private static float minCookCooldown = 2f; //5f
-    private static float maxCookCooldown = 3f; //20f
+    private static float minCookCooldown = 60f;
+    private static float maxCookCooldown = 200f;
 
     private void OnEnable()
     {

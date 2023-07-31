@@ -39,7 +39,7 @@ public class PauseMenuManager : MonoBehaviour
 
         EventMessenger.TriggerEvent("UpdateVolumeSliders");
 
-        //debug
+        UpdateCoinfallLevelText();
     }
     private void OnEnable()
     {
@@ -52,6 +52,21 @@ public class PauseMenuManager : MonoBehaviour
         EventMessenger.StopListening("CloseMenu", ClosePauseMenu);
         EventMessenger.StopListening("UISwitched", UpdateUI);
         EventMessenger.StopListening("UpdateSwitchBodyText", UpdateSwitchBodyText);
+    }
+    public void IncreaseCoinfallLevel()
+    {
+        CoinfallManager.IncrementStartingLevel();
+        UpdateCoinfallLevelText();
+    }
+    public void DecreaseCoinfallLevel()
+    {
+        CoinfallManager.DecrementStartingLevel();
+        UpdateCoinfallLevelText();
+    }
+    private void UpdateCoinfallLevelText()
+    {
+        PrimitiveMessenger.EditObject("coinfallStartingLevel", CoinfallManager.GetStartingLevel());
+        EventMessenger.TriggerEvent("UpdateCoinfallStartingLevelText");
     }
     public void ClosePauseMenu()
     {

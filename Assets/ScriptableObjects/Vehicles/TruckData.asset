@@ -22,4 +22,4 @@ MonoBehaviour:
   interactableOffsetUp: {x: 0, y: 0.8}
   interactableOffsetLeft: {x: -0.4, y: 0.1}
   interactableOffsetRight: {x: 0.4, y: 0.1}
-  capacity: 20
+  capacity: 100

@@ -30,4 +30,6 @@ public class SaveData
 
     public bool hasKeycard;
     public bool isKeycardUIEnabled;
+
+    public int coinfallStartingLevel;
 }

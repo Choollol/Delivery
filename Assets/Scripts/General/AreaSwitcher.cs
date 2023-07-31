@@ -6,6 +6,8 @@ public class AreaSwitcher : MonoBehaviour
 {
     [SerializeField] private GameManager.Area newArea;
     [SerializeField] private SpriteAnimator.Direction direction;
+
+    private bool canSwitch = true;
     void Start()
     {
         
@@ -17,20 +19,25 @@ public class AreaSwitcher : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") || collision.CompareTag("Vehicle"))
+        if (canSwitch)
         {
-            if (collision.GetComponent<SpriteAnimator>().direction == direction)
+            if (collision.CompareTag("Player") || (collision.CompareTag("Vehicle") && GameManager.isPlayerInVehicle))
             {
-                GameManager.Instance.SwitchArea(newArea);
-                gameObject.SetActive(false);
+                if (collision.GetComponent<SpriteAnimator>().direction == direction)
+                {
+                    GameManager.Instance.SwitchArea(newArea);
+                    //gameObject.SetActive(false);
+                    canSwitch = false;
+                }
             }
-        }
-        else if (collision.transform.parent.CompareTag("Player"))
-        {
-            if (collision.transform.parent.GetComponent<SpriteAnimator>().direction == direction)
+            else if (collision.transform.parent.CompareTag("Player"))
             {
-                GameManager.Instance.SwitchArea(newArea);
-                gameObject.SetActive(false);
+                if (collision.transform.parent.GetComponent<SpriteAnimator>().direction == direction)
+                {
+                    GameManager.Instance.SwitchArea(newArea);
+                    //gameObject.SetActive(false);
+                    canSwitch = false;
+                }
             }
         }
     }

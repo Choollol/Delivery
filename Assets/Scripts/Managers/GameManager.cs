@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Policy;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     public static bool isInTransition { get; private set; }
 
     public static bool isInWorld = true;
+
+    public static bool canPause = true;
 
     public static bool isPlayerInVehicle;
     public static string vehicleName;
@@ -59,6 +61,10 @@ public class GameManager : MonoBehaviour
         EventMessenger.StartListening("OpenCoinfall", OpenCoinfall);
 
         PrimitiveMessenger.AddObject("CoinfallBaseAmount", 0);
+
+        EventMessenger.StartListening("FadeBGM", FadeBGM);
+
+        EventMessenger.StartListening("GameLoaded", GameLoaded);
     }
     private void OnDisable()
     {
@@ -73,6 +79,10 @@ public class GameManager : MonoBehaviour
         EventMessenger.StopListening("OpenCoinfall", OpenCoinfall);
 
         PrimitiveMessenger.RemoveObject("CoinfallBaseAmount");
+
+        EventMessenger.StopListening("FadeBGM", FadeBGM);
+
+        EventMessenger.StopListening("GameLoaded", GameLoaded);
     }
     private void Start()
     {
@@ -80,7 +90,7 @@ public class GameManager : MonoBehaviour
 
         BoundsManager.SetBounds(-8, 8, -5.76f, 5.76f);
 
-        isGameActive = true;
+        isGameActive = false;
     }
     private void Update()
     {
@@ -97,15 +107,23 @@ public class GameManager : MonoBehaviour
                     EventMessenger.TriggerEvent("SwitchMenuToMain");
                 }
             }
-            else if (isGameActive && !isInTransition)
+            else if (isGameActive && !isInTransition && canPause)
             {
                 SceneManager.LoadSceneAsync("Pause_Menu", LoadSceneMode.Additive);
             }
         }
-        if (Input.GetKeyDown(KeyCode.Backspace))
+        /*if (Input.GetKeyDown(KeyCode.Backspace))
         {
             OpenCoinfall();
-        }
+        }*/
+    }
+    private void GameLoaded()
+    {
+        isGameActive = true;
+    }
+    private void FadeBGM()
+    {
+        StartCoroutine(AudioManager.FadeAudio(currentArea + " Theme", 0.5f, 0));
     }
     private void OpenCoinfall()
     {
@@ -149,7 +167,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator HandleOpenSceneWithTransition(string sceneName, string transitionEventName)
     {
-        StartCoroutine(AudioManager.FadeAudio(currentArea + " Theme", 0.5f, 0));
+        FadeBGM();
         EventMessenger.TriggerEvent("SetPlayerCanActFalse");
         StartTransition();
         doContinueTransition = false;
@@ -189,9 +207,8 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator HandleSwitchArea(Area newArea)
     {
-        StartCoroutine(AudioManager.FadeAudio(currentArea + " Theme", 0.5f, 0));
+        FadeBGM();
         EventMessenger.TriggerEvent("SetPlayerCanActFalse");
-        POIManager.ID = 0;
         StartTransition();
         GameObject currentPlayer;
         if (isPlayerInVehicle)
@@ -281,6 +298,7 @@ public class GameManager : MonoBehaviour
             EventMessenger.TriggerEvent("UpdateVehicleArea");
             VehicleManager.UpdateVehicleArea();
         }
+        yield return new WaitForEndOfFrame();
         EventMessenger.TriggerEvent("SetPlayerCanActTrue");
         EventMessenger.TriggerEvent("UpdatePOIPointers");
         ObjectPoolManager.ResetPool("POIIndicators");

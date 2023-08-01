@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -33,6 +32,9 @@ public class CoinfallManager : MonoBehaviour
 
     private static int startingLevel = 1;
     private static int startingLevelMultiplier = 100;
+
+    private int coinsEarned = 0;
+    private int maxStartingLevelCoins = 70;
     private void OnEnable()
     {
         PrimitiveMessenger.AddObject("isRightKeyPressed", false);
@@ -250,11 +252,30 @@ public class CoinfallManager : MonoBehaviour
     }
     private IEnumerator EndGame()
     {
+        if (score < 20)
+        {
+            coinsEarned = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 6 + 2));
+        }
+        else if (score < 60)
+        {
+            coinsEarned = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 8 + 4));
+        }
+        else
+        {
+            coinsEarned = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 12 + 7));
+        }
+        int startingLevelCoins = (startingLevel / 5) * (startingLevel / 5);
+        if (startingLevelCoins > maxStartingLevelCoins)
+        {
+            startingLevelCoins = maxStartingLevelCoins;
+        }
+        coinsEarned += startingLevelCoins;
+
         StartCoroutine(AudioManager.FadeAudio("Coinfall Theme", 0.5f, 0));
         yield return new WaitForSeconds(2);
         gameOverText.gameObject.SetActive(true);
         yield return new WaitForSeconds(3);
-        gameOverText.text = "Final Score: " + score;
+        gameOverText.text = "Coins Earned: " + coinsEarned;
         yield return new WaitForSeconds(2);
         ObjectPoolManager.RemovePoolKey("CoinfallCoins");
         GameManager.Instance.CloseSceneWithTransition("Coinfall", "CloseCoinfall");
@@ -268,20 +289,8 @@ public class CoinfallManager : MonoBehaviour
         EventMessenger.TriggerEvent("UnfreezeCamera");
         EventMessenger.TriggerEvent("CompleteOrder");
 
-        int coins = 0;
-        if (score < 20)
-        {
-            coins = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 6 + 2));
-        }
-        else if (score < 60)
-        {
-            coins = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 8 + 4));
-        }
-        else
-        {
-            coins = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 12 + 7));
-        }
-        CurrencyManager.Instance.SpawnCoins(coins, 1.5f);
+        
+        CurrencyManager.Instance.SpawnCoins(coinsEarned, 1.5f);
 
         GameManager.isInWorld = true;
     }

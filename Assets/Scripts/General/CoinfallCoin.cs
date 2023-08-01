@@ -37,6 +37,7 @@ public class CoinfallCoin : MonoBehaviour, IPointerDownHandler
         else if (CoinfallManager.isInGame)
         {
             gameObject.SetActive(false);
+            PrimitiveMessenger.EditObject("doDeleteLetter", true);
             EventMessenger.TriggerEvent("DeleteLetter" + key);
             EventMessenger.TriggerEvent("LoseLife");
         }

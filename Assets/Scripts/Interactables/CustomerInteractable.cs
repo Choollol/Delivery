@@ -27,7 +27,7 @@ public class CustomerInteractable : MonoBehaviour, IInteractable
         if (POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, id)] > 0)
         {
             SceneManager.LoadSceneAsync("Deliver_Confirmation", LoadSceneMode.Additive);
-            PrimitiveMessenger.EditObject("CoinfallBaseAmount", Random.Range(5f, 7f) *
+            PrimitiveMessenger.EditObject("CoinfallBaseAmount", Random.Range(5f, 6.5f) *
                 POIManager.poiOrders[new KeyValuePair<GameManager.Area, int>(GameManager.currentArea, id)]);
             POIManager.currentOrderID = id;
         }

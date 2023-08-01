@@ -41,7 +41,7 @@ public class Pillar : MonoBehaviour
 
             transform.localPosition = new Vector3(newX, newY + yOffset, 0);
 
-            if (Mathf.Abs(transform.position.x) > 20 && Mathf.Abs(transform.position.y) > 20)
+            if (Mathf.Abs(transform.position.x) > 10 && Mathf.Abs(transform.position.y) > 10)
             {
                 doRotate = false;
                 gameObject.SetActive(false);

@@ -44,7 +44,7 @@ public class UIManager : MonoBehaviour
     }
     void Start()
     {
-        if (uiDict.TryGetValue("Main UI", out GameObject temp))
+        if (uiDict.TryGetValue("Main UI", out _))
         {
             SwitchUI("Main UI");
         }

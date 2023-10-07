@@ -11,8 +11,8 @@ public class DishManager : MonoBehaviour
     private static int maxCookDishes = 5;
 
     private static float cookCooldown = 5;
-    private static float minCookCooldown = 60f;
-    private static float maxCookCooldown = 200f;
+    private static float minCookCooldown = 40f;
+    private static float maxCookCooldown = 180f;
 
     private void OnEnable()
     {

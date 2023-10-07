@@ -32,6 +32,11 @@ public class BGMPlayer : MonoBehaviour
     private IEnumerator DelayBGM(float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
+        while (!GameManager.isInWorld)
+        {
+            yield return null;
+        }
+        AudioManager.GetSound(key).volume = 1;
         AudioManager.PlaySound(key);
         yield break;
     }

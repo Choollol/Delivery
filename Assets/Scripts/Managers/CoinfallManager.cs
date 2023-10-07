@@ -247,6 +247,7 @@ public class CoinfallManager : MonoBehaviour
         countdownText.gameObject.SetActive(false);
         StartCoroutine(SpawnCoin());
         isInGame = true;
+        AudioManager.GetSound("Coinfall Theme").volume = 1;
         AudioManager.PlaySound("Coinfall Theme");
         yield break;
     }
@@ -264,12 +265,15 @@ public class CoinfallManager : MonoBehaviour
         {
             coinsEarned = (int)(PrimitiveMessenger.GetObject("CoinfallBaseAmount") * ((float)score / 12 + 7));
         }
-        int startingLevelCoins = (startingLevel / 5) * (startingLevel / 5);
-        if (startingLevelCoins > maxStartingLevelCoins)
+        if (score > 0)
         {
-            startingLevelCoins = maxStartingLevelCoins;
+            int startingLevelCoins = (startingLevel / 5) * (startingLevel / 5);
+            if (startingLevelCoins > maxStartingLevelCoins)
+            {
+                startingLevelCoins = maxStartingLevelCoins;
+            }
+            coinsEarned += startingLevelCoins;
         }
-        coinsEarned += startingLevelCoins;
 
         StartCoroutine(AudioManager.FadeAudio("Coinfall Theme", 0.5f, 0));
         yield return new WaitForSeconds(2);

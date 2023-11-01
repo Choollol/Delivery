@@ -28,7 +28,7 @@ public class InputController : MonoBehaviour
         private set { }
     }
 
-    public InputType type;
+    public InputType inputType;
 
     protected SpriteRenderer spriteRenderer;
     protected BoxCollider2D boxCollider;
@@ -47,7 +47,7 @@ public class InputController : MonoBehaviour
         verticalInput = 0;
         if (canAct && GameManager.isGameActive)
         {
-            if (type == InputType.User)
+            if (inputType == InputType.User)
             {
                 horizontalInput = Input.GetAxisRaw("Horizontal");
                 verticalInput = Input.GetAxisRaw("Vertical");

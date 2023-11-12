@@ -21,7 +21,7 @@ public class VehicleMovement : SpriteMovement
     }
     private void Update()
     {
-        if (inputController.type == InputController.InputType.None)
+        if (inputController.inputType == InputController.InputType.None)
         {
             rb.constraints = RigidbodyConstraints2D.FreezePosition;
         }
@@ -34,12 +34,12 @@ public class VehicleMovement : SpriteMovement
     protected override void SetCanMoveTrue()
     {
         base.SetCanMoveTrue();
-        inputController.type = InputController.InputType.User;
+        inputController.inputType = InputController.InputType.User;
     }
     protected override void SetCanMoveFalse()
     {
         base.SetCanMoveFalse();
-        inputController.type = InputController.InputType.None;
+        inputController.inputType = InputController.InputType.None;
     }
     private void AddSpeed()
     {

@@ -45,7 +45,7 @@ public class PlayerToggler : MonoBehaviour
     }
     private void EnterVehicle()
     {
-        inputController.type = InputController.InputType.None;
+        inputController.inputType = InputController.InputType.None;
         inputController.enabled = false;
         spriteRenderer.enabled = false;
         characterMovement.enabled = false;
@@ -55,7 +55,7 @@ public class PlayerToggler : MonoBehaviour
     private void ExitVehicle()
     {
         inputController.enabled = true;
-        inputController.type = InputController.InputType.User;
+        inputController.inputType = InputController.InputType.User;
         spriteRenderer.enabled = true;
         transform.position = PrimitiveMessenger.GetObject("vehiclePosition") + new Vector3(0, 0.1f);
         CameraMovement.SetFollowTarget(gameObject);

@@ -24,7 +24,7 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
                 EventMessenger.TriggerEvent("EnterVehicle");
                 if (PrimitiveMessenger.GetObject("currentVehicleFuel") > 0)
                 {
-                    inputController.type = InputController.InputType.User;
+                    inputController.inputType = InputController.InputType.User;
                 }
                 CameraMovement.SetFollowTarget(transform.parent.gameObject);
                 GameManager.isPlayerInVehicle = true;
@@ -36,7 +36,7 @@ public class VehicleInteractable : MonoBehaviour, IInteractable
             {
                 PrimitiveMessenger.EditObject("vehiclePosition", transform.position);
                 EventMessenger.TriggerEvent("ExitVehicle");
-                inputController.type = InputController.InputType.None;
+                inputController.inputType = InputController.InputType.None;
                 GameManager.isPlayerInVehicle = false;
                 GetComponentInParent<VehicleAudioController>().PlayExitAudio();
                 EventMessenger.TriggerEvent("DisableVehicleUI");
